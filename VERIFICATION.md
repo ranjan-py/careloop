@@ -17,8 +17,8 @@ execution, real-integration smoke where applicable, and E2E validation. Valid st
 | Docker stack (compose up, health checks) | PASS | `docker compose up -d --wait`; all 10 services healthy | 2026-08-14: healthy after 3 real fixes (Neo4j env strict-validation, Langfuse healthcheck $HOSTNAME binding, host-port collisions) | first-run `--wait` exit masked by pipe — fixed process |
 | Seeded patient (Synthea pipeline / overlay fallback) | PASS | `python -m app.context.seed` in container against live Postgres+Neo4j | 4 patients, 24 timeline events, 11 chart facts, 30 evidence snippets, 1730 feedback rows; REAL Synthea base bundle | feedback source aggregates internally inconsistent — documented choice in seed agent notes |
 | Patient overview (pre-visit intelligence) | PASS | authenticated API reads: /patients, /patients/john-miller, timeline | priorities with severities, meds ehr_status, labs runtime-relative (K+ = today−92d exactly) | UI walkthrough pending E2E |
-| Deepgram streaming (live mic) | NOT STARTED | — | — | task 4 |
-| Deepgram streaming (replay fixture) | IN PROGRESS | smoke streamed 90 s of the fixture through live WS | see smoke log; full replay mode through app WS is task 4 | — |
+| Deepgram streaming (live mic) | IN PROGRESS | relay implemented + unit-tested; browser mic path pending Chrome walkthrough | code path identical to verified replay leg | E2E step 5 encore |
+| Deepgram streaming (replay fixture) | PASS | `scripts/verify_replay.py` — real E2E through app WS against live stack | enc_c9890888bd82: 20 finals + 56 interims, diarization correct, finalize handshake clean, 21 segments persisted, ws_errors=0 | — |
 | OpenAI fact extraction (per-condition subagents) | NOT STARTED | — | — | — |
 | Medication-conflict preservation | NOT STARTED | — | — | — |
 | Live next-best question/action | NOT STARTED | — | — | — |
