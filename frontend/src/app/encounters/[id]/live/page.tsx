@@ -84,6 +84,7 @@ export default function LiveEncounterPage() {
 
   const streamRef = useRef<EncounterStream | null>(null);
   const micRef = useRef<MicCapture | null>(null);
+  const transcriptRef = useRef<HTMLDivElement | null>(null);
 
   /* ----------------------- hydrate from GET /encounters ------------------ */
   useEffect(() => {
@@ -280,6 +281,15 @@ export default function LiveEncounterPage() {
     .slice(-2);
   const interimSegments = Object.values(interim);
 
+  // Sticky auto-scroll: follow the live transcript unless the clinician has
+  // deliberately scrolled up to review earlier turns (>160px from bottom).
+  useEffect(() => {
+    const el = transcriptRef.current;
+    if (!el) return;
+    const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 160;
+    if (nearBottom) el.scrollTop = el.scrollHeight;
+  }, [finalSegments.length, interimSegments.length]);
+
   if (detail.loading) {
     return (
       <AppShell>
@@ -372,17 +382,22 @@ export default function LiveEncounterPage() {
         </p>
       ))}
 
-      {/* three-column workspace (spec §8) */}
-      <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-12">
+      {/* three-column workspace (spec §8) — fills the viewport below the
+          header on desktop; each column scrolls internally (user feedback:
+          the fixed 32rem transcript cap left the column at half height). */}
+      <div className="mt-6 grid grid-cols-1 gap-6 xl:h-[calc(100vh-15rem)] xl:min-h-[28rem] xl:grid-cols-12">
         {/* Column A — Conversation */}
-        <Card className="xl:col-span-5">
+        <Card className="xl:col-span-5 xl:flex xl:min-h-0 xl:flex-col xl:overflow-hidden">
           <div className="flex items-center justify-between">
             <EyebrowLabel>Conversation</EyebrowLabel>
             <span className="text-xs text-ink-faint">
               tap a speaker label to correct it
             </span>
           </div>
-          <div className="mt-4 max-h-[32rem] space-y-4 overflow-y-auto pr-2">
+          <div
+            ref={transcriptRef}
+            className="mt-4 max-h-[32rem] space-y-4 overflow-y-auto pr-2 xl:max-h-none xl:min-h-0 xl:flex-1"
+          >
             {finalSegments.length === 0 && interimSegments.length === 0 && (
               <p className="text-sm text-ink-muted">
                 No transcript yet. Start the replay fixture or the microphone
@@ -422,7 +437,7 @@ export default function LiveEncounterPage() {
         </Card>
 
         {/* Column B — Live patient state */}
-        <Card className="xl:col-span-4">
+        <Card className="xl:col-span-4 xl:min-h-0 xl:overflow-y-auto">
           <EyebrowLabel>Live patient state</EyebrowLabel>
           {newToday.length > 0 && (
             <div className="mt-4">
@@ -468,7 +483,7 @@ export default function LiveEncounterPage() {
         </Card>
 
         {/* Column C — Next best question / action */}
-        <Card className="xl:col-span-3">
+        <Card className="xl:col-span-3 xl:min-h-0 xl:overflow-y-auto">
           <EyebrowLabel>Next best</EyebrowLabel>
           {activeSuggestions.length === 0 ? (
             <p className="mt-3 text-sm text-ink-muted">
