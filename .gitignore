@@ -1,0 +1,32 @@
+# Secrets — never committed (spec §2.5, §35)
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+npm-debug.log*
+
+# Data pipeline artifacts (the SELECTED bundle + overlay + frozen fixture ARE committed;
+# raw generated cohorts are not)
+data/synthea/output/
+data/synthea/cohort_raw/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Docker local state
+*.local.yml.bak
