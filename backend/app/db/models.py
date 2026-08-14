@@ -225,6 +225,23 @@ class EvidenceSnippet(Base):
     topic_tags: Mapped[list] = mapped_column(JSON, default=list)
 
 
+class TriggerLog(Base):
+    """Every §9 trigger decision (fired/skipped + reason) — feeds §22 evals
+    and §23 analytics. Written by app.ai.pipeline on each debounce evaluation."""
+
+    __tablename__ = "trigger_log"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    encounter_id: Mapped[str] = mapped_column(ForeignKey("encounters.id"), index=True)
+    stage: Mapped[str] = mapped_column(String(32))  # extraction|suggestions
+    decision: Mapped[str] = mapped_column(String(16))  # fired|skipped
+    reason: Mapped[str] = mapped_column(String(255))
+    buffered_words: Mapped[int] = mapped_column(Integer, default=0)
+    buffered_seconds: Mapped[float] = mapped_column(Float, default=0.0)
+    detail: Mapped[dict] = mapped_column(JSON, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
 class FeedbackAnalyticsEvent(Base):
     """Synthetic historical recommendation events (spec §23 — 'Synthetic demo cohort')."""
 

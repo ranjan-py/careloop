@@ -37,7 +37,10 @@ def get_client() -> AsyncOpenAI:
             "OPENAI_API_KEY is not set — AI features are BLOCKED (real integration not verified)."
         )
     if _client is None:
-        _client = AsyncOpenAI(api_key=settings.openai_api_key)
+        # Per-request timeout + one retry: a single hung HTTP request must
+        # never freeze the live encounter loop (observed in full-loop run:
+        # one stalled call blocked the cycle task for the whole session).
+        _client = AsyncOpenAI(api_key=settings.openai_api_key, timeout=45.0, max_retries=1)
     return _client
 
 
@@ -49,6 +52,7 @@ async def call_model(
     output_schema: type[SchemaT],
     model: str | None = None,
     prompt_version: str | None = None,
+    usage_sink: dict | None = None,
 ) -> SchemaT:
     """Single internal wrapper around the provider (Responses API, structured output).
 
@@ -57,6 +61,9 @@ async def call_model(
       on traces and persisted rows once observability wiring lands.
     - output_schema: Pydantic model; the response is schema-validated before
       any caller may persist it (free-form model text never mutates state).
+    - usage_sink: optional dict the caller provides; on success it is filled
+      with {model, input_tokens, output_tokens, total_tokens} so tracing can
+      record token usage/cost (spec §20) without changing the return type.
     """
     settings = get_settings()
     client = get_client()
@@ -71,6 +78,12 @@ async def call_model(
     parsed = response.output_parsed
     if parsed is None:
         raise ValueError(f"Model returned no parseable output for task '{task}'")
+    if usage_sink is not None:
+        usage = getattr(response, "usage", None)
+        usage_sink["model"] = chosen_model
+        usage_sink["input_tokens"] = getattr(usage, "input_tokens", None)
+        usage_sink["output_tokens"] = getattr(usage, "output_tokens", None)
+        usage_sink["total_tokens"] = getattr(usage, "total_tokens", None)
     return parsed
 
 

@@ -17,6 +17,13 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.ai.extraction import FactView
+from app.ai.reports import (
+    DecidedAction,
+    RejectedAction,
+    ReportLeakageError,
+    generate_reports,
+)
 from app.auth.session import require_clinician
 from app.config import get_settings
 from app.db import models as m
@@ -181,6 +188,80 @@ async def finalize_care_plan(
                 patient_id=care_plan.patient_id,
             )
             executions.append(execution)
+
+        # Spec §16: REAL report generation from the final clinician-decided
+        # plan — modified actions in FINAL wording, rejected as exclusions.
+        decided_inputs: list[DecidedAction] = []
+        rejected_inputs: list[RejectedAction] = []
+        for action in actions:
+            decision = await _latest_decision(session, action.id)
+            if action.status == "rejected":
+                rejected_inputs.append(RejectedAction(title=action.title, category=action.category))
+                continue
+            was_modified = bool(decision and decision.final_title)
+            decided_inputs.append(
+                DecidedAction(
+                    category=action.category,
+                    title=(decision.final_title if was_modified else action.title),
+                    description=(
+                        decision.final_description
+                        if decision and decision.final_description
+                        else action.description
+                    ),
+                    status="modified" if was_modified else "approved",
+                    original_title=(
+                        action.title
+                        if was_modified and decision.final_title != action.title
+                        else None
+                    ),
+                )
+            )
+        encounter = await session.get(m.Encounter, care_plan.encounter_id)
+        fact_rows = (
+            await session.execute(
+                select(m.Fact).where(
+                    m.Fact.patient_id == care_plan.patient_id,
+                    (m.Fact.encounter_id == care_plan.encounter_id)
+                    | (m.Fact.encounter_id.is_(None)),
+                )
+            )
+        ).scalars().all()
+        fact_views = [
+            FactView(
+                id=f.id,
+                fact_type=f.fact_type,
+                subject=f.subject,
+                value=f.value,
+                source_type=f.source_type,
+                source_class=f.source_class,
+                verification_status=f.verification_status,
+                method=f.method,
+                encounter_id=f.encounter_id,
+                conflicts_with=f.conflicts_with,
+            )
+            for f in fact_rows
+        ]
+        try:
+            bundle = await generate_reports(
+                encounter_id=care_plan.encounter_id,
+                patient_id=care_plan.patient_id,
+                facts=fact_views,
+                decided_actions=decided_inputs,
+                rejected_actions=rejected_inputs,
+                trace_id=encounter.trace_id if encounter else None,
+            )
+        except ReportLeakageError as exc:
+            raise HTTPException(
+                status.HTTP_502_BAD_GATEWAY,
+                detail=f"Report generation failed leakage check: {exc}",
+            ) from None
+        except Exception as exc:  # noqa: BLE001 — honest failure, never canned
+            raise HTTPException(
+                status.HTTP_502_BAD_GATEWAY,
+                detail=f"Report generation failed: {type(exc).__name__}: {exc}",
+            ) from None
+        care_plan.clinician_summary = bundle.clinician_summary
+        care_plan.patient_instructions = bundle.patient_instructions
 
         care_plan.status = "finalized"
         care_plan.finalized_at = datetime.now(timezone.utc)

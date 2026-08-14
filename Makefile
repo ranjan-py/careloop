@@ -42,6 +42,11 @@ reset-demo:
 	$(COMPOSE) exec backend python -m app.context.seed
 	$(COMPOSE) exec backend python -m app.observability.warm_trace
 
+# Fast between-rehearsals reset: wipes encounter-derived state, keeps the
+# seeded chart, replays the Neo4j projection. Full golden snapshot = reset-demo.
+reset-runtime:
+	$(COMPOSE) exec backend python -m app.context.reset_runtime
+
 rebuild-graph:
 	$(COMPOSE) exec backend python -m app.context.rebuild_graph
 

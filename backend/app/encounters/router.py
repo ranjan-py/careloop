@@ -23,6 +23,9 @@ from pydantic import BaseModel, ValidationError
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.ai.care_plan import generate_care_plan
+from app.ai.extraction import FactView
+from app.ai.pipeline import DatabaseStore, EncounterPipeline
 from app.auth.session import require_clinician
 from app.config import get_settings
 from app.db import models as m
@@ -49,8 +52,11 @@ from app.schemas.core import (
     SessionFinalizingMessage,
     SessionStartMessage,
     SpeakerCorrectMessage,
+    StateFactMessage,
     Suggestion,
+    SuggestionActiveMessage,
     SuggestionDismissMessage,
+    SuggestionRemoveMessage,
     TranscriptFinalMessage,
     TranscriptInterimMessage,
     TranscriptSegment,
@@ -65,6 +71,21 @@ router = APIRouter(prefix="/api/encounters", tags=["encounters"])
 
 def _new_id(prefix: str) -> str:
     return f"{prefix}_{uuid.uuid4().hex[:12]}"
+
+
+def _fact_view(f: m.Fact) -> FactView:
+    return FactView(
+        id=f.id,
+        fact_type=f.fact_type,
+        subject=f.subject,
+        value=f.value,
+        source_type=f.source_type,
+        source_class=f.source_class,
+        verification_status=f.verification_status,
+        method=f.method,
+        encounter_id=f.encounter_id,
+        conflicts_with=f.conflicts_with,
+    )
 
 
 def _encounter_payload(e: m.Encounter, stream_ticket: str | None = None) -> dict:
@@ -124,8 +145,16 @@ async def get_encounter(
     encounter = await session.get(m.Encounter, encounter_id)
     if encounter is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Encounter not found")
+    # Chart facts (encounter_id NULL) populate Column B's "from chart" section;
+    # THIS encounter's facts are NEW TODAY (spec §8B). Other encounters' facts
+    # are excluded — rehearsal runs must not leak into a fresh encounter's view.
     facts = (
-        await session.execute(select(m.Fact).where(m.Fact.encounter_id == encounter_id))
+        await session.execute(
+            select(m.Fact).where(
+                m.Fact.patient_id == encounter.patient_id,
+                (m.Fact.encounter_id == encounter_id) | (m.Fact.encounter_id.is_(None)),
+            )
+        )
     ).scalars().all()
     suggestions = (
         await session.execute(select(m.Suggestion).where(m.Suggestion.encounter_id == encounter_id))
@@ -182,6 +211,62 @@ async def end_encounter(
     actions = (
         await session.execute(select(m.CarePlanAction).where(m.CarePlanAction.care_plan_id == care_plan.id))
     ).scalars().all()
+
+    if not actions:
+        # Spec §12 step 5: REAL care-plan generation. Failures surface honestly
+        # (spec §2.4/§31) — the frontend shows a generation-failed state + retry.
+        fact_rows = (
+            await session.execute(
+                select(m.Fact).where(
+                    m.Fact.patient_id == encounter.patient_id,
+                    (m.Fact.encounter_id == encounter_id) | (m.Fact.encounter_id.is_(None)),
+                )
+            )
+        ).scalars().all()
+        segments = (
+            await session.execute(
+                select(m.TranscriptSegment)
+                .where(m.TranscriptSegment.encounter_id == encounter_id)
+                .order_by(m.TranscriptSegment.ts)
+            )
+        ).scalars().all()
+        transcript_text = "\n".join(f"{s.speaker}: {s.text}" for s in segments)
+        try:
+            candidates = await generate_care_plan(
+                encounter_id=encounter_id,
+                patient_id=encounter.patient_id,
+                facts=[_fact_view(f) for f in fact_rows],
+                transcript_text=transcript_text,
+                trace_id=encounter.trace_id,
+            )
+        except Exception as exc:  # noqa: BLE001 — honest failure, never canned
+            raise HTTPException(
+                status.HTTP_502_BAD_GATEWAY,
+                detail=f"Care-plan generation failed: {type(exc).__name__}: {exc}",
+            ) from None
+        for cand in candidates:
+            session.add(
+                m.CarePlanAction(
+                    id=_new_id("act"),
+                    care_plan_id=care_plan.id,
+                    category=cand.category,
+                    title=cand.title,
+                    description=cand.description,
+                    rationale=cand.rationale,
+                    patient_facts_used=cand.patient_facts_used,
+                    evidence_refs=cand.evidence_refs,
+                    risk_level=cand.risk_level,
+                    permission=cand.permission,
+                    status="pending",
+                )
+            )
+        care_plan.status = "in_review"
+        await session.commit()
+        actions = (
+            await session.execute(
+                select(m.CarePlanAction).where(m.CarePlanAction.care_plan_id == care_plan.id)
+            )
+        ).scalars().all()
     return {
         "encounter": _encounter_payload(encounter),
         "care_plan": {
@@ -228,11 +313,15 @@ async def encounter_stream(ws: WebSocket, encounter_id: str) -> None:
 
     mode = first.mode
     session_factory = get_session_factory()
+    patient_id: str | None = None
+    trace_id: str | None = None
     async with session_factory() as session:
         encounter = await session.get(m.Encounter, encounter_id)
         if encounter is not None:
             encounter.status = "live"
             encounter.mode = mode
+            patient_id = encounter.patient_id
+            trace_id = encounter.trace_id
             await session.commit()
         # Deterministic seg_<n> ids continue after any rows already persisted
         # for this encounter (page-refresh re-hydration must never collide).
@@ -259,6 +348,29 @@ async def encounter_stream(ws: WebSocket, encounter_id: str) -> None:
             except Exception:  # noqa: BLE001 — client gone; disconnect path logs
                 socket_open = False
 
+    # AI loop wiring (spec §9): finalized segments feed the extraction
+    # pipeline; fact/suggestion changes stream to Columns B/C as envelopes.
+    async def on_fact(fact, change) -> None:
+        await send_safe(StateFactMessage(fact=fact, change=change))
+
+    async def on_suggestion(sug) -> None:
+        await send_safe(SuggestionActiveMessage(suggestion=sug))
+
+    async def on_suggestion_remove(suggestion_id: str) -> None:
+        await send_safe(SuggestionRemoveMessage(suggestion_id=suggestion_id))
+
+    pipeline: EncounterPipeline | None = None
+    if patient_id is not None:
+        pipeline = EncounterPipeline(
+            encounter_id=encounter_id,
+            patient_id=patient_id,
+            trace_id=trace_id,
+            store=DatabaseStore(session_factory),
+            on_fact=on_fact,
+            on_suggestion=on_suggestion,
+            on_suggestion_remove=on_suggestion_remove,
+        )
+
     assembler = SegmentAssembler(encounter_id, final_count=existing_finals)
     finals_persisted = 0
 
@@ -275,6 +387,8 @@ async def encounter_stream(ws: WebSocket, encounter_id: str) -> None:
             await session.commit()
         finals_persisted += 1
         await send_safe(TranscriptFinalMessage(segment=segment))
+        if pipeline is not None:
+            await pipeline.feed_final_segment(segment)
 
     async def on_status(state: ConnectionState, detail: str) -> None:
         await send_safe(ConnStatusMessage(deepgram=state, detail=detail))
@@ -362,6 +476,9 @@ async def encounter_stream(ws: WebSocket, encounter_id: str) -> None:
                 # finalize() returns (spec §8 End Visit).
                 await shutdown_streaming()
                 await relay.finalize()
+                if pipeline is not None:
+                    # Final extraction pass over any remaining buffer (spec §12 step 2).
+                    await pipeline.flush()
                 async with session_factory() as session:
                     encounter = await session.get(m.Encounter, encounter_id)
                     if encounter is not None:
@@ -380,6 +497,8 @@ async def encounter_stream(ws: WebSocket, encounter_id: str) -> None:
         socket_open = False
         await shutdown_streaming()
         await relay.close()
+        if pipeline is not None:
+            await pipeline.close()
         logger.info(
             "WS session closed for encounter %s: mode=%s client_audio_bytes=%d "
             "relay_bytes_sent=%d finals_persisted=%d ignored_replay_audio_bytes=%d",

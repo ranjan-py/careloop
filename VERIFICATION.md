@@ -19,20 +19,21 @@ execution, real-integration smoke where applicable, and E2E validation. Valid st
 | Patient overview (pre-visit intelligence) | PASS | authenticated API reads: /patients, /patients/john-miller, timeline | priorities with severities, meds ehr_status, labs runtime-relative (K+ = today−92d exactly) | UI walkthrough pending E2E |
 | Deepgram streaming (live mic) | IN PROGRESS | relay implemented + unit-tested; browser mic path pending Chrome walkthrough | code path identical to verified replay leg | E2E step 5 encore |
 | Deepgram streaming (replay fixture) | PASS | `scripts/verify_replay.py` — real E2E through app WS against live stack | enc_c9890888bd82: 20 finals + 56 interims, diarization correct, finalize handshake clean, 21 segments persisted, ws_errors=0 | — |
-| OpenAI fact extraction (per-condition subagents) | NOT STARTED | — | — | — |
-| Medication-conflict preservation | NOT STARTED | — | — | — |
-| Live next-best question/action | NOT STARTED | — | — | — |
-| Care-plan generation (schema + fact-ID enums) | NOT STARTED | — | — | — |
-| Evidence retrieval (BM25 → evidence_refs) | NOT STARTED | — | — | — |
-| Approve / Modify / Reject + shared enum | NOT STARTED | — | — | — |
-| Permission tiers (auto-exec + scripted denial) | NOT STARTED | — | — | — |
-| Feedback persistence | NOT STARTED | — | — | — |
-| Mocked tool execution | NOT STARTED | — | — | — |
-| Clinician summary (leakage + fidelity guaranteed) | NOT STARTED | — | — | — |
-| Patient instructions (leakage + fidelity guaranteed) | NOT STARTED | — | — | — |
+| OpenAI fact extraction (per-condition subagents) | PASS | `scripts/verify_full_loop.py` — real replay through app WS + pipeline | enc_b63a87ee77ec: 11 fact envelopes live, 7 encounter facts persisted, per-condition spans in Langfuse | conflict rule tightened after false metformin conflict (stopped-vs-active only) |
+| Medication-conflict preservation | PASS | same run | `lisinopril: stopped (2 wks)` added with conflicts_with=med-lisinopril; EHR fact → disputed (never overwritten); CONFLICTS_WITH edge live in Neo4j | — |
+| Live next-best question/action | PASS | same run | 2 on-topic suggestions over WS (dizziness clarification, BP-measurement arrangement); per-encounter dedup; trigger decisions logged | hung-call freeze fixed via 45 s provider timeout |
+| Care-plan generation (schema + fact-ID enums) | PASS | `scripts/verify_hitl.py` on enc_43ed39c44a78 (real OpenAI) | 5 actions, categories follow_up/lab/medication/monitoring/other, all fact ids valid | ~14 s generation latency |
+| Evidence retrieval (BM25 → evidence_refs) | PASS | same run + GET /api/evidence resolve | 5/5 actions carry retrieval-produced refs; refs resolve to real snippets (ev-012, ev-030) | score floor 4.0 |
+| Approve / Modify / Reject + shared enum | PASS | same run via REST | approve lab, modify follow-up ("ten days"), reject monitoring w/ patient_limitation + kiosk remark | — |
+| Permission tiers (auto-exec + scripted denial) | PASS (tiers) | tier assignment + med gating verified; auto_demo executed | medication → required_clinician_decision; exactly one auto_demo | scripted DENIAL demo moment staged in E2E (task 8) |
+| Feedback persistence | PASS | Decision rows persisted with original-vs-final | modify preserved original; reject carries category+remarks | — |
+| Mocked tool execution | PASS | finalize on same run | 4/4 executions ok; rejected action ran NO tool | — |
+| Clinician summary (leakage + fidelity guaranteed) | PASS | same run + deterministic leakage_check in generator | 2179 chars; rejected title absent; "ten days" (modified FINAL wording) present | leakage_check is exact-match; paraphrase detection = §22.1 model evaluator |
+| Patient instructions (leakage + fidelity guaranteed) | PASS | same run | 1797 chars; rejected absent; modified wording present | — |
 | Neo4j projection + multi-hop provenance query | PASS (projection) | seed projected; /api/context/john-miller/graph read live | 35 nodes (Patient/Conditions/Meds/Labs/Obs/CareGaps/Encounters), 34 rels | provenance query exercised after AI loop exists (task 5) |
 | Langfuse tracing (real trace ingested) | NOT STARTED | — | — | — |
-| Langfuse prompt management | NOT STARTED | — | — | — |
+| Langfuse prompt management | PASS | real create/fetch round-trip + runtime fetch-by-label | 7 `careloop_*` prompts published @v1, served from Langfuse, versions recorded on traces | edits require publishing a new version (label `production`) |
+| Golden-snapshot reset (`make reset-runtime`) | PASS | ran before each full-loop attempt | wipes encounter-derived state, restores disputed chart facts, rebuilds graph projection (37 nodes) | full volume reset remains `make reset-demo` |
 | Online/session evaluators | NOT STARTED | — | — | — |
 | Launch-criteria table | NOT STARTED | — | — | — |
 | Offline eval suite (current config) | NOT STARTED | — | — | — |

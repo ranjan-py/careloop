@@ -6,6 +6,8 @@ these routes render whatever rows exist and return empty lists otherwise.
 
 from __future__ import annotations
 
+from datetime import datetime, timedelta, timezone
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -90,11 +92,18 @@ async def get_timeline(
     _=Depends(require_clinician),
 ) -> dict:
     await _get_patient_or_404(session, patient_id)
+    # Recent-first, capped: the Synthea base chart carries decades of background
+    # encounters that would drown the scripted story (observed in UI walkthrough).
+    cutoff = datetime.now(timezone.utc) - timedelta(days=450)
     rows = (
         await session.execute(
             select(m.TimelineEvent)
-            .where(m.TimelineEvent.patient_id == patient_id)
-            .order_by(m.TimelineEvent.occurred_at)
+            .where(
+                m.TimelineEvent.patient_id == patient_id,
+                m.TimelineEvent.occurred_at >= cutoff,
+            )
+            .order_by(m.TimelineEvent.occurred_at.desc())
+            .limit(20)
         )
     ).scalars().all()
     events = [TimelineEvent.model_validate(r) for r in rows]
