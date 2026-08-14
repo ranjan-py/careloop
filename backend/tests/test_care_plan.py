@@ -116,7 +116,7 @@ def patch_model(monkeypatch, drafts: list[CarePlanDraft]):
     calls: dict = {"n": 0, "kwargs": []}
 
     async def _mock(*, task, instructions, input_text, output_schema, model=None,
-                    prompt_version=None, usage_sink=None):
+                    prompt_version=None, usage_sink=None, reasoning_effort=None):
         assert task == "generate_care_plan"
         assert output_schema is CarePlanDraft
         calls["kwargs"].append({

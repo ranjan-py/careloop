@@ -203,6 +203,8 @@ export const api = {
 
   /* analytics / evals / ops */
   getAnalyticsFeedback: () => get<AnalyticsFeedback>("/analytics/feedback"),
+  /** Most recent encounter — AI Operations default after resets. */
+  getLatestEncounter: () => get<{ encounter: Encounter }>("/encounters/latest"),
   getEvals: (encounterId: string) =>
     get<EvalsResponse>(`/evals/${encodeURIComponent(encounterId)}`),
   /** From app Postgres, NOT Langfuse (spec §21A). */

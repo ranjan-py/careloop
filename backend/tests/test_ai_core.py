@@ -119,7 +119,7 @@ def make_mock_call_model(responses: dict[str, object]):
     calls: list[dict] = []
 
     async def _mock(*, task, instructions, input_text, output_schema, model=None,
-                    prompt_version=None, usage_sink=None):
+                    prompt_version=None, usage_sink=None, reasoning_effort=None):
         calls.append({"task": task, "input_text": input_text, "prompt_version": prompt_version})
         if usage_sink is not None:
             usage_sink.update({"model": "mock", "input_tokens": 10, "output_tokens": 5, "total_tokens": 15})

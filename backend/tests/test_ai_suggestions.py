@@ -45,7 +45,7 @@ def patch_model(monkeypatch, suggestions_by_call: list[list[SuggestionCandidate]
     calls = {"n": 0, "inputs": []}
 
     async def _mock(*, task, instructions, input_text, output_schema, model=None,
-                    prompt_version=None, usage_sink=None):
+                    prompt_version=None, usage_sink=None, reasoning_effort=None):
         assert task == "generate_next_best_action"
         calls["inputs"].append(input_text)
         idx = min(calls["n"], len(suggestions_by_call) - 1)

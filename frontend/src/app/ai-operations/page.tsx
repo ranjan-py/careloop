@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { ErrorState, LoadingState } from "@/components/States";
 import { Card, EyebrowLabel, GhostButton, StatusChip } from "@/components/ui";
@@ -444,6 +444,38 @@ export default function AiOperationsPage() {
     STORAGE_KEYS.lastEncounterId,
   );
   const [patientId, setPatientId] = useStoredId(STORAGE_KEYS.lastPatientId);
+
+  // Remembered ids go stale after `make reset-runtime` deletes encounters
+  // (observed: honest 404 on the Trace Summary tab). Default to the most
+  // recent encounter when nothing is remembered, and self-heal by re-checking
+  // whenever the remembered encounter no longer exists.
+  useEffect(() => {
+    let cancelled = false;
+    async function adopt() {
+      try {
+        if (encounterId) {
+          try {
+            await api.getEncounter(encounterId);
+            return; // remembered id still exists
+          } catch {
+            /* stale — fall through to latest */
+          }
+        }
+        const latest = await api.getLatestEncounter();
+        if (!cancelled) {
+          setEncounterId(latest.encounter.id);
+          if (latest.encounter.patient_id) setPatientId(latest.encounter.patient_id);
+        }
+      } catch {
+        /* no encounters at all — tabs show their honest empty/error states */
+      }
+    }
+    adopt();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <AppShell>

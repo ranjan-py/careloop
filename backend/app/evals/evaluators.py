@@ -79,8 +79,28 @@ DETERMINISTIC_GATES: tuple[str, ...] = (
 # and exist ONLY to turn reconstructed token counts into a rough dollar figure).
 # ---------------------------------------------------------------------------
 
-COST_INPUT_PER_1M_USD: float = 1.25  # PLACEHOLDER $/1M input tokens
-COST_OUTPUT_PER_1M_USD: float = 10.00  # PLACEHOLDER $/1M output tokens
+# PLACEHOLDER rates by model family (verify against current published pricing
+# before quoting): gpt-5.2 ≈ 1.25/10.00, gpt-5-mini ≈ 0.25/2.00,
+# gpt-5-nano ≈ 0.05/0.40 ($/1M input, output). Resolved from OPENAI_MODEL.
+_RATES_PER_1M_USD: dict[str, tuple[float, float]] = {
+    "gpt-5-nano": (0.05, 0.40),
+    "gpt-5-mini": (0.25, 2.00),
+    "gpt-5.2": (1.25, 10.00),
+}
+
+
+def _model_rates() -> tuple[float, float]:
+    from app.config import get_settings
+
+    model = get_settings().openai_model
+    for prefix, rates in _RATES_PER_1M_USD.items():
+        if model.startswith(prefix):
+            return rates
+    return _RATES_PER_1M_USD["gpt-5.2"]  # conservative default
+
+
+COST_INPUT_PER_1M_USD: float = _model_rates()[0]
+COST_OUTPUT_PER_1M_USD: float = _model_rates()[1]
 
 #: Reconstruction constants (documented rough factors, chars/4 heuristic).
 _JSON_OVERHEAD_TOKENS = 150  # structured-output envelope per call
@@ -787,7 +807,7 @@ def estimate_encounter_cost(snapshot: EncounterSnapshot) -> EvalOutcome:
         f"(~{input_tokens} input / ~{output_tokens} output tokens via chars/4); "
         f"placeholder rates ${COST_INPUT_PER_1M_USD}/1M in, ${COST_OUTPUT_PER_1M_USD}/1M out "
         f"-> ~${cost:.4f}. Langfuse v4 events_only exposes no usage API and has no "
-        f"gpt-5.2 pricing — this is a token-derived estimate, not a measured cost"
+        f"model pricing configured — this is a token-derived estimate, not a measured cost"
     )
     return EvalOutcome(
         evaluator="cost_per_encounter",

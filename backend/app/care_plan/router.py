@@ -269,17 +269,24 @@ async def finalize_care_plan(
 
         # Re-run online evaluators now that decisions/executions/reports exist
         # — the End-Visit run's leakage/fidelity/tool checks were vacuous
-        # (spec §22.1 gates are about the FINAL artifacts). Non-fatal.
-        try:
-            from app.evals.evaluators import run_online_evals
+        # (spec §22.1 gates are about the FINAL artifacts). BACKGROUND on the
+        # pipeline loop: keeping them in-request pushed finalize past the
+        # proxy timeout (user-observed 500s). Failures degrade observability.
+        import logging
 
-            await run_online_evals(care_plan.encounter_id)
-        except Exception as exc:  # noqa: BLE001
-            import logging
+        from app.ai.executor import get_executor
+        from app.evals.evaluators import run_online_evals
 
-            logging.getLogger(__name__).warning(
-                "Post-finalize online evals failed for %s: %s", care_plan.encounter_id, exc
-            )
+        _enc_id = care_plan.encounter_id
+
+        def _log_eval_result(fut) -> None:
+            exc = fut.exception()
+            if exc is not None:
+                logging.getLogger(__name__).warning(
+                    "Background post-finalize evals failed for %s: %s", _enc_id, exc
+                )
+
+        get_executor().submit(run_online_evals(_enc_id)).add_done_callback(_log_eval_result)
 
     action_payloads = []
     for action in actions:

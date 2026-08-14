@@ -66,6 +66,7 @@ async def call_model(
     model: str | None = None,
     prompt_version: str | None = None,
     usage_sink: dict | None = None,
+    reasoning_effort: str | None = None,
 ) -> SchemaT:
     """Single internal wrapper around the provider (Responses API, structured output).
 
@@ -85,12 +86,21 @@ async def call_model(
     chosen_model = model or settings.openai_model
     logger.info("call_model task=%s model=%s prompt_version=%s", task, chosen_model, prompt_version)
     started = _time.monotonic()
+    extra: dict = {}
+    effort = reasoning_effort or settings.openai_reasoning_effort
+    if effort:
+        # GPT-5 family: effort caps reasoning-token spend. Measured on nano:
+        # default ~21 s/call vs low ~4 s — load-bearing for the live loop.
+        # Per-task override: suggestions run "minimal" (short-output task;
+        # p95 was 10.2 s at "low" with the full fact-inventory input).
+        extra["reasoning"] = {"effort": effort}
     try:
         response = await client.responses.parse(
             model=chosen_model,
             instructions=instructions,
             input=input_text,
             text_format=output_schema,
+            **extra,
         )
     except Exception as exc:
         logger.warning(

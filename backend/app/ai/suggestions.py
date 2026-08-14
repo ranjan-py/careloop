@@ -198,6 +198,9 @@ class SuggestionEngine:
                 output_schema=NextBestSuggestions,
                 prompt_version=prompt.version,
                 usage_sink=usage,
+                # Short-output live task: "minimal" keeps p95 under the 6 s
+                # launch bound (measured 10.2 s at "low" with full inventory).
+                reasoning_effort="minimal",
             )
             record_usage(span, usage)
             outcome.usage = usage

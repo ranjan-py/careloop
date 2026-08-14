@@ -184,7 +184,7 @@ class TestScoring:
 
 def _fake_call_model_factory(calls: list[str]):
     async def fake_call_model(*, task, instructions, input_text, output_schema,
-                              model=None, prompt_version=None, usage_sink=None):
+                              model=None, prompt_version=None, usage_sink=None, reasoning_effort=None):
         calls.append(task)
         if usage_sink is not None:
             usage_sink.update({"model": model or "fake", "input_tokens": 100,

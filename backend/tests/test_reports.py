@@ -86,7 +86,7 @@ def patch_reports_model(monkeypatch, bodies_by_call: dict[str, list[str]]):
     calls: dict = {"n": 0, "per_audience": {"clinician": 0, "patient": 0}, "inputs": []}
 
     async def _mock(*, task, instructions, input_text, output_schema, model=None,
-                    prompt_version=None, usage_sink=None):
+                    prompt_version=None, usage_sink=None, reasoning_effort=None):
         assert output_schema is ReportOutput
         audience = audience_of(instructions)
         attempt = calls["per_audience"][audience]
@@ -224,7 +224,7 @@ class TestRejectionClassifier:
         seen: dict = {}
 
         async def _mock(*, task, instructions, input_text, output_schema, model=None,
-                        prompt_version=None, usage_sink=None):
+                        prompt_version=None, usage_sink=None, reasoning_effort=None):
             assert task == "classify_override"
             assert output_schema is RejectionSuggestion
             seen.update({"model": model, "input": input_text, "instructions": instructions})

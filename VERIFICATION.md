@@ -6,7 +6,7 @@ execution, real-integration smoke where applicable, and E2E validation. Valid st
 
 **Last updated:** 2026-08-14 (build day 1 — stack up, smokes PASS, seed PASS)
 **Git commit:** see `git log`
-**OpenAI model:** gpt-5.2 — verified against real key (startup probe + smoke)
+**OpenAI model:** gpt-5-nano, reasoning effort "low" (suggestions: "minimal") — verified against real key; switched from gpt-5.2 in the model-economy pass (below)
 **Deepgram model:** nova-3-medical — verified via real streaming smoke
 **Host ports (deviation from spec §28, collisions with other stacks on this machine):** frontend 3002, backend 8002, Langfuse 3101, Neo4j 7474/7687
 
@@ -65,6 +65,24 @@ v4 events_only deployments removed `/api/public/traces` (data was verifiably in 
 clinicians 1 · patients 4 · timeline_events 24 · chart_facts 11 · evidence_snippets 30
 feedback_events 1730 · neo4j_projection nodes=39 relationships=34
 ```
+
+## Model-economy pass (2026-08-14, user-requested: cheapest model + fix End-Visit 500s)
+
+Config: OPENAI_MODEL=gpt-5-nano everywhere, reasoning effort "low" (suggestions
+"minimal" — per-task override). Verified arc, all against the live stack:
+- nano default effort: quality PASS but p95 NBA **64.6 s** (RED) — nano spends
+  heavily on reasoning tokens by default (probe: 21 s/call → 4.1 s at "low" →
+  1.6 s at "minimal").
+- nano + "low": all beats PASS, hitl wall 23 s, p95 NBA 10.2 s (still RED with
+  full fact-inventory inputs).
+- nano + "low" + suggestions "minimal": **launch criteria 6/6 GREEN — p95 NBA
+  2.3 s, cost ~$0.01/encounter** (vs 4.8 s / ~$0.28 on gpt-5.2). Loop + HITL
+  suites PASS (enc_8f897564f9ed).
+End-Visit 500s fixed: online evaluators moved to background on the pipeline
+loop (both /end and finalize); loaders now state honest expected durations.
+AI Ops stale-encounter 404 fixed: GET /api/encounters/latest + self-healing
+localStorage fallback. Cost estimator now resolves placeholder rates from the
+configured model family.
 
 ## Repo hygiene
 

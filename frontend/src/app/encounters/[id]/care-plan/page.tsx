@@ -134,7 +134,7 @@ export default function CarePlanPage() {
 
       <div className="mt-8">
         {ended.loading ? (
-          <LoadingState label="Running end-of-encounter pipeline (summary, care plan, evals)…" />
+          <LoadingState label="Generating the care plan — one grounded model call over the encounter facts. Typically 10–30 seconds; evaluators run in the background." />
         ) : ended.error ? (
           <ErrorState
             error={ended.error}

@@ -32,8 +32,12 @@ class Settings(BaseSettings):
 
     # OpenAI
     openai_api_key: str = ""
-    openai_model: str = "gpt-5.2"
-    openai_eval_model: str = "gpt-5-mini"
+    openai_model: str = "gpt-5-nano"
+    openai_eval_model: str = "gpt-5-nano"
+    # GPT-5-family reasoning effort. nano at default effort took ~21 s per
+    # structured call (measured); "low" = 4.1 s with clinically sharper output
+    # than "minimal" (1.6 s). Empty string disables the parameter.
+    openai_reasoning_effort: str = "low"
 
     # Deepgram
     deepgram_api_key: str = ""

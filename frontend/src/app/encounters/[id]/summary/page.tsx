@@ -33,7 +33,7 @@ export default function SummaryPage() {
   if (summary.loading) {
     return (
       <AppShell>
-        <LoadingState label="Loading finalized summary and execution results…" />
+        <LoadingState label="Executing approved Actions and generating both reports from the final decisions. Typically 10–25 seconds…" />
       </AppShell>
     );
   }

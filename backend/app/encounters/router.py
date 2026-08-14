@@ -139,6 +139,25 @@ async def create_encounter(
     return {"encounter": _encounter_payload(encounter, stream_ticket=ticket)}
 
 
+@router.get("/latest")
+async def get_latest_encounter(
+    session: AsyncSession = Depends(get_session),
+    _=Depends(require_clinician),
+) -> dict:
+    """Most recent encounter — the AI Operations default. Remembered ids go
+    stale after `make reset-runtime` deletes encounters; the ops view falls
+    back to this instead of pointing at a ghost (honest 404 only when the
+    database truly has no encounters)."""
+    encounter = (
+        await session.execute(
+            select(m.Encounter).order_by(m.Encounter.created_at.desc()).limit(1)
+        )
+    ).scalar_one_or_none()
+    if encounter is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="No encounters exist yet")
+    return {"encounter": _encounter_payload(encounter)}
+
+
 @router.get("/{encounter_id}")
 async def get_encounter(
     encounter_id: str,
@@ -281,12 +300,16 @@ async def end_encounter(
                 logger.warning("Encounter summary generation failed for %s: %s", encounter_id, exc)
         await session.commit()
 
-        # Spec §12 step 6: initial online evaluators. Failures degrade
-        # observability, never the care workflow.
-        try:
-            await run_online_evals(encounter_id)
-        except Exception as exc:  # noqa: BLE001
-            logger.warning("Online evals failed for %s: %s", encounter_id, exc)
+        # Spec §12 step 6: initial online evaluators — in the BACKGROUND on
+        # the pipeline loop. They are observability, not response content;
+        # keeping them in-request pushed End Visit past the proxy timeout
+        # (user-observed 500s). Failures degrade observability only.
+        def _log_eval_result(fut) -> None:
+            exc = fut.exception()
+            if exc is not None:
+                logger.warning("Background online evals failed for %s: %s", encounter_id, exc)
+
+        get_executor().submit(run_online_evals(encounter_id)).add_done_callback(_log_eval_result)
         actions = (
             await session.execute(
                 select(m.CarePlanAction).where(m.CarePlanAction.care_plan_id == care_plan.id)
