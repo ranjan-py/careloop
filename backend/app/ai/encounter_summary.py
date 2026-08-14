@@ -107,9 +107,20 @@ async def generate_encounter_summary(
         record_usage(span, usage)
         span.update(output={"title": parsed.title, "body": parsed.body})
 
+    # Degeneration guard (shared with reports — observed gpt-5-nano emitting
+    # trailing brace-runs + meta-commentary inside string fields).
+    from app.ai.reports import sanitize_generated_text
+
+    title, title_issues = sanitize_generated_text(parsed.title)
+    body, body_issues = sanitize_generated_text(parsed.body)
+    if title_issues or body_issues:
+        logger.warning(
+            "Encounter summary output degeneration (sanitized): %s",
+            title_issues + body_issues,
+        )
     return GeneratedSummary(
-        title=parsed.title.strip(),
-        body=parsed.body.strip(),
+        title=title,
+        body=body,
         prompt_version=prompt.version,
         model_version=usage.get("model") or settings.openai_model,
     )

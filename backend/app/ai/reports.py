@@ -125,6 +125,69 @@ class ReportBundle:
 # ---------------------------------------------------------------------------
 
 
+# ---------------------------------------------------------------------------
+# Output-degeneration guard. Observed on gpt-5-nano (user-reported): the model
+# finished the document, then emitted hundreds of trailing braces plus
+# meta-commentary ("extraneous trailing braces are not intended… Here's the
+# corrected output") INSIDE the schema's string field — schema validation
+# cannot catch content inside a valid string. Deterministic sanitation +
+# one retry; the backend never renders raw degeneration.
+# ---------------------------------------------------------------------------
+
+_BRACE_RUN_RE = re.compile(r"(?:[{}\[\]]\s*){5,}")
+_META_MARKERS: tuple[str, ...] = (
+    "extraneous trailing braces",
+    "output is garbled",
+    "corrected output",
+    "clean json",
+    "valid json",
+    "final answer is",
+    "let's finalize",
+    "sorry for confusion",
+    "continuous retry prevented",
+    "provide just the two fields",
+)
+
+#: Sanitized body shorter than this = the document itself was destroyed.
+_MIN_BODY_CHARS = 120
+
+
+class ReportDegenerationError(RuntimeError):
+    """Model output remained degenerate (brace loops / meta-commentary) after retry."""
+
+    def __init__(self, audience: str, issues: list[str]) -> None:
+        self.audience = audience
+        self.issues = issues
+        super().__init__(
+            f"{audience} report output degenerate after retry: {'; '.join(issues)}"
+        )
+
+
+def sanitize_generated_text(text: str) -> tuple[str, list[str]]:
+    """Strip trailing degeneration deterministically; report what was found.
+
+    Returns (cleaned_text, issues) — empty issues means the text was clean."""
+    issues: list[str] = []
+    cleaned = text
+    match = _BRACE_RUN_RE.search(cleaned)
+    if match:
+        issues.append(f"brace-run degeneration at char {match.start()}")
+        cleaned = cleaned[: match.start()]
+    lowered = cleaned.lower()
+    cut = len(cleaned)
+    for marker in _META_MARKERS:
+        idx = lowered.find(marker)
+        if idx != -1 and idx < cut:
+            cut = idx
+            issues.append(f"meta-commentary marker {marker!r}")
+    if cut < len(cleaned):
+        # Cut at the start of the line carrying the first marker.
+        line_start = cleaned.rfind("\n", 0, cut)
+        cleaned = cleaned[: line_start if line_start != -1 else cut]
+    cleaned = cleaned.rstrip(" \t\n{}[]\"'")
+    return cleaned.strip(), issues
+
+
 def _normalize(text: str) -> str:
     return _NORM_RE.sub(" ", text.lower()).strip()
 
@@ -239,21 +302,52 @@ async def _generate_one(
                 output_schema=ReportOutput,
                 prompt_version=prompt.version,
                 usage_sink=usage,
+                # Reports carry the fidelity/leakage guarantees — stronger
+                # model (measured: nano paraphrased clinician-edited wording).
+                model=settings.openai_generation_model,
             )
             record_usage(span, usage)
             usage_totals.append(usage)
 
+            # Degeneration guard BEFORE leakage: sanitize, retry if destroyed.
+            title, title_issues = sanitize_generated_text(parsed.title)
+            body, body_issues = sanitize_generated_text(parsed.body)
+            degen_issues = title_issues + body_issues
+            if degen_issues:
+                logger.warning(
+                    "%s report output degeneration (attempt %d, sanitized): %s",
+                    audience, attempt + 1, degen_issues,
+                )
+            # Short is only fatal when degeneration was actually detected —
+            # a clean short document is the model's legitimate choice.
+            if degen_issues and len(body) < _MIN_BODY_CHARS:
+                degen_issues.append(f"body only {len(body)} chars after sanitation")
+                attempt_input = (
+                    input_text
+                    + "\n\nYOUR PREVIOUS ATTEMPT contained formatting garbage (stray "
+                    "braces or commentary about JSON/output). The schema string "
+                    "fields must contain ONLY the finished document text — stop "
+                    "cleanly at its final sentence."
+                )
+                violations = degen_issues
+                continue
+
             violations = leakage_check(
-                f"{parsed.title}\n{parsed.body}", rejected_titles, modified_pairs
+                f"{title}\n{body}", rejected_titles, modified_pairs
             )
             if not violations:
                 span.update(
-                    output={"title": parsed.title, "body": parsed.body, "retried": attempt > 0}
+                    output={
+                        "title": title,
+                        "body": body,
+                        "retried": attempt > 0,
+                        "sanitized": bool(degen_issues),
+                    }
                 )
                 return GeneratedReport(
                     audience=audience,
-                    title=parsed.title.strip(),
-                    body=parsed.body.strip(),
+                    title=title,
+                    body=body,
                     prompt_version=prompt.version,
                     model_version=usage.get("model") or settings.openai_model,
                     retried=attempt > 0,
@@ -270,7 +364,9 @@ async def _generate_one(
                 + "\nRegenerate the report WITHOUT any reference to that content."
             )
 
-        span.update(output={"error": "leakage_check failed after retry", "violations": violations})
+        span.update(output={"error": "generation failed after retry", "violations": violations})
+        if violations and any("chars after sanitation" in v or "degeneration" in v for v in violations):
+            raise ReportDegenerationError(audience, violations)
         raise ReportLeakageError(audience, violations)
 
 

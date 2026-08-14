@@ -90,13 +90,21 @@ _RATES_PER_1M_USD: dict[str, tuple[float, float]] = {
 
 
 def _model_rates() -> tuple[float, float]:
+    """Conservative: the PRICIER of the configured models (generation runs on
+    a stronger model than extraction/judges — estimate errs high)."""
     from app.config import get_settings
 
-    model = get_settings().openai_model
-    for prefix, rates in _RATES_PER_1M_USD.items():
-        if model.startswith(prefix):
-            return rates
-    return _RATES_PER_1M_USD["gpt-5.2"]  # conservative default
+    settings = get_settings()
+
+    def rates_for(model: str) -> tuple[float, float]:
+        for prefix, rates in _RATES_PER_1M_USD.items():
+            if model.startswith(prefix):
+                return rates
+        return _RATES_PER_1M_USD["gpt-5.2"]
+
+    a = rates_for(settings.openai_model)
+    b = rates_for(settings.openai_generation_model)
+    return (max(a[0], b[0]), max(a[1], b[1]))
 
 
 COST_INPUT_PER_1M_USD: float = _model_rates()[0]

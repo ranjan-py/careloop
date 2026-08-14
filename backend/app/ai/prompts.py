@@ -183,6 +183,11 @@ Rules:
 - Never instruct dose changes or name doses the plan does not contain.
 - Do not fabricate readings, dates, or results not present in the facts.
 - Output: a short title and the report body text.
+
+Output discipline (STRICT): the schema string fields contain ONLY the
+finished document text. Never emit braces, brackets, JSON syntax, formatting
+commentary, apologies, corrections, or any reference to JSON or to your own
+output. Stop cleanly at the final sentence of the document — nothing after it.
 """
     ),
     "careloop_encounter_summary": (
@@ -378,6 +383,23 @@ class PromptRegistry:
         """Ensure every default exists in Langfuse; returns name -> version."""
         return {name: self.get(name).version for name in self._defaults}
 
+    def publish(self, name: str) -> str:
+        """Force-publish the in-code default as a NEW Langfuse version.
+
+        get_prompt serves by label, so edits to PROMPT_DEFAULTS are invisible
+        until published — run `python -m app.ai.prompts publish <name>` after
+        changing a default."""
+        if name not in self._defaults:
+            raise KeyError(f"Unknown prompt name: {name!r}")
+        client = self._client()
+        if client is None:
+            raise RuntimeError("Langfuse client unavailable — cannot publish")
+        client.create_prompt(
+            name=name, prompt=self._defaults[name], labels=[self._label], type="text"
+        )
+        self.clear_cache()
+        return self.get(name).version
+
     def clear_cache(self) -> None:
         with self._lock:
             self._cache.clear()
@@ -391,3 +413,15 @@ def get_registry() -> PromptRegistry:
     if _default_registry is None:
         _default_registry = PromptRegistry()
     return _default_registry
+
+
+if __name__ == "__main__":  # `python -m app.ai.prompts publish <name> [...]`
+    import sys
+
+    if len(sys.argv) >= 3 and sys.argv[1] == "publish":
+        registry = get_registry()
+        for prompt_name in sys.argv[2:]:
+            print(f"{prompt_name} -> {registry.publish(prompt_name)}")
+    else:
+        print("usage: python -m app.ai.prompts publish <name> [...]", file=sys.stderr)
+        sys.exit(2)

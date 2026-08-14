@@ -34,6 +34,11 @@ class Settings(BaseSettings):
     openai_api_key: str = ""
     openai_model: str = "gpt-5-nano"
     openai_eval_model: str = "gpt-5-nano"
+    # Care-plan + report generation carry the demo's hard guarantees
+    # (fact grounding, modified-wording fidelity, no degeneration). Measured
+    # on nano: 2/5 actions ungrounded and clinician wording paraphrased —
+    # mini restores the guarantees for ~1-2 cents/encounter more.
+    openai_generation_model: str = "gpt-5-mini"
     # GPT-5-family reasoning effort. nano at default effort took ~21 s per
     # structured call (measured); "low" = 4.1 s with clinically sharper output
     # than "minimal" (1.6 s). Empty string disables the parameter.

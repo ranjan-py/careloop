@@ -234,6 +234,9 @@ async def generate_care_plan(
             output_schema=CarePlanDraft,
             prompt_version=prompt.version,
             usage_sink=usage,
+            # Guarantee-carrying generation runs on the stronger model
+            # (measured: nano left 2/5 actions ungrounded).
+            model=get_settings().openai_generation_model,
         )
         record_usage(span, usage)
 

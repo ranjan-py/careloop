@@ -84,6 +84,26 @@ AI Ops stale-encounter 404 fixed: GET /api/encounters/latest + self-healing
 localStorage fallback. Cost estimator now resolves placeholder rates from the
 configured model family.
 
+## Output-degeneration + per-task model routing (2026-08-14, user-reported)
+
+User observed gpt-5-nano emitting trailing brace-runs + meta-commentary
+("Sorry for confusion. Here's the corrected output…") INSIDE the patient
+instructions — schema-valid string, rendered raw. Fixes, verified for real:
+- Deterministic `sanitize_generated_text` guard on reports + encounter
+  summary: trims brace-runs/meta-markers (unit-tested against the observed
+  garbage verbatim), one retry with an output-discipline note, then honest
+  `ReportDegenerationError`. Degeneration can no longer reach the UI.
+- Prompt v2 published to Langfuse (`careloop_report@v2`,
+  `careloop_encounter_summary@v2`) with a STRICT output-discipline block;
+  added the missing `python -m app.ai.prompts publish` path (label-served
+  prompts made in-code edits invisible).
+- Quality frontier measured: pure-nano generation left 2/5 actions
+  ungrounded and paraphrased the clinician's edited wording (17/19). Split
+  routing — OPENAI_GENERATION_MODEL=gpt-5-mini for care plan + reports,
+  nano for extraction/suggestions/summary/judges — restored **19/19** at
+  ~$0.02–0.03/encounter (~10× cheaper than the original gpt-5.2 config).
+  Cost estimator prices conservatively off the pricier configured model.
+
 ## Repo hygiene
 
 **2026-08-14 — gitleaks (docker, zricethezav/gitleaks) over FULL git history
