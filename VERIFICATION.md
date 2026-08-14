@@ -36,7 +36,7 @@ execution, real-integration smoke where applicable, and E2E validation. Valid st
 | Golden-snapshot reset (`make reset-runtime`) | PASS | ran before each full-loop attempt | wipes encounter-derived state, restores disputed chart facts, rebuilds graph projection (37 nodes) | full volume reset remains `make reset-demo` |
 | Online/session evaluators | PASS | `scripts/verify_evals.py` (20/20) + wired into POST /end | 11 evaluator rows on enc_5a356d41a1e4: 7 deterministic gates green + 4 model judges; run_online_evaluators span on encounter trace | model judges labeled "Prototype evaluator — not clinical validation" |
 | Launch-criteria table | PASS | same run + /api/evals API | 6/6 GREEN: schema 100%, unsupported-fact 0%, leakage 0, fidelity 100%, p95 NBA 4.9 s (<6 s), ~$0.22/encounter (<$0.50, token-derived estimate) | Langfuse v4 events_only strips usage from public API — cost reconstructed at documented placeholder rates |
-| Offline eval suite (current config) | PASS (2-case) | `make eval`-equivalent real run, results → Langfuse experiment `careloop_eval_cases` | gates ALL PASS, judge-vs-human agreement 4/4 | full 10-case run in E2E step 29 |
+| Offline eval suite (current config) | PASS (9/10, 1 known failure) | full 10-case real run (370 s) + targeted reruns; results → Langfuse experiment `careloop_eval_cases` | gap coverage 80%, category coverage 100%, schema 100%, judge agreement 16/20 with disagreements listed; case_09 false positive fixed via discriminative-token matcher | **case_06 kept RED deliberately**: generator re-orders labs already current within 30 d (true positive — recency check is the next fix). Fact-recall 38% is matcher-limited, documented |
 | Synthetic feedback analytics | PASS | /api/analytics/feedback after live decisions | synthetic cohort + current_session {approved:2, modified:1, rejected:1} merged; live patient_limitation rejection visible; decision-mix key bug (accepted_pct) fixed | high-friction list stays synthetic-cohort by design |
 | Golden-snapshot reset (`make reset-demo`) | NOT STARTED | — | — | — |
 | OpenAI smoke | PASS | `python -m app.smoke` in container | gpt-5.2 structured extraction, ~2.0 s latency | — |
@@ -65,6 +65,14 @@ v4 events_only deployments removed `/api/public/traces` (data was verifiably in 
 clinicians 1 · patients 4 · timeline_events 24 · chart_facts 11 · evidence_snippets 30
 feedback_events 1730 · neo4j_projection nodes=39 relationships=34
 ```
+
+## Repo hygiene
+
+**2026-08-14 — gitleaks (docker, zricethezav/gitleaks) over FULL git history
+(`--log-opts=--all`): 8 commits scanned, no leaks found.** `.env` gitignored
+from commit zero; pinned pk-lf-/sk-lf- Langfuse demo keys are localhost-only
+by design. Re-run before sharing the repo; rotate OpenAI/Deepgram keys the
+day after the onsite regardless.
 
 ## Live-loop reliability saga (2026-08-14, documented per §2.4 honesty rules)
 
