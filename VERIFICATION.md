@@ -34,10 +34,10 @@ execution, real-integration smoke where applicable, and E2E validation. Valid st
 | Langfuse tracing (real trace ingested) | NOT STARTED | — | — | — |
 | Langfuse prompt management | PASS | real create/fetch round-trip + runtime fetch-by-label | 7 `careloop_*` prompts published @v1, served from Langfuse, versions recorded on traces | edits require publishing a new version (label `production`) |
 | Golden-snapshot reset (`make reset-runtime`) | PASS | ran before each full-loop attempt | wipes encounter-derived state, restores disputed chart facts, rebuilds graph projection (37 nodes) | full volume reset remains `make reset-demo` |
-| Online/session evaluators | NOT STARTED | — | — | — |
-| Launch-criteria table | NOT STARTED | — | — | — |
-| Offline eval suite (current config) | NOT STARTED | — | — | — |
-| Synthetic feedback analytics | NOT STARTED | — | — | — |
+| Online/session evaluators | PASS | `scripts/verify_evals.py` (20/20) + wired into POST /end | 11 evaluator rows on enc_5a356d41a1e4: 7 deterministic gates green + 4 model judges; run_online_evaluators span on encounter trace | model judges labeled "Prototype evaluator — not clinical validation" |
+| Launch-criteria table | PASS | same run + /api/evals API | 6/6 GREEN: schema 100%, unsupported-fact 0%, leakage 0, fidelity 100%, p95 NBA 4.9 s (<6 s), ~$0.22/encounter (<$0.50, token-derived estimate) | Langfuse v4 events_only strips usage from public API — cost reconstructed at documented placeholder rates |
+| Offline eval suite (current config) | PASS (2-case) | `make eval`-equivalent real run, results → Langfuse experiment `careloop_eval_cases` | gates ALL PASS, judge-vs-human agreement 4/4 | full 10-case run in E2E step 29 |
+| Synthetic feedback analytics | PASS | /api/analytics/feedback after live decisions | synthetic cohort + current_session {approved:2, modified:1, rejected:1} merged; live patient_limitation rejection visible; decision-mix key bug (accepted_pct) fixed | high-friction list stays synthetic-cohort by design |
 | Golden-snapshot reset (`make reset-demo`) | NOT STARTED | — | — | — |
 | OpenAI smoke | PASS | `python -m app.smoke` in container | gpt-5.2 structured extraction, ~2.0 s latency | — |
 | Deepgram smoke | PASS | fixture streamed through real live WS (linear16/16k) | nova-3-medical, 35 finals, first transcript 2.2 s, scripted terms present | 2× real-time pacing stalls Deepgram — smoke uses 90 s slice at 1× |
@@ -65,6 +65,25 @@ v4 events_only deployments removed `/api/public/traces` (data was verifiably in 
 clinicians 1 · patients 4 · timeline_events 24 · chart_facts 11 · evidence_snippets 30
 feedback_events 1730 · neo4j_projection nodes=39 relationships=34
 ```
+
+## Live-loop reliability saga (2026-08-14, documented per §2.4 honesty rules)
+
+Three-act debugging arc on the streaming AI loop, each verified by repeated
+`verify_full_loop` runs:
+1. **Starvation (intermittent):** during replay, in-loop OpenAI calls stalled;
+   some runs had zero live suggestions. Fix: dedicated AI-pipeline event loop
+   (`app/ai/executor.py`) + per-loop caching for the three loop-affine
+   singletons (SQLAlchemy engine, Neo4j driver, AsyncOpenAI client).
+2. **Cancellation (deterministic after isolation):** extraction cycles ran
+   inside the debounce task; every new transcript final cancelled the debounce
+   and await-forwarding killed the running cycle mid-suggestion-call
+   (CancelledError bypasses `except Exception` — no failure logs). Fix:
+   detach the cycle task; forced flush still awaits completion.
+3. **Over-firing (after the fix):** un-cancelled cycles produced 15–18
+   suggestions/run. Fix: cooldown 15 s → 45 s; suggestions require NEW or
+   DISPUTED facts, not value updates.
+Final state: 3 consecutive PASS runs post-isolation; post-churn-control run
+PASS with 8 on-topic suggestions, conflict + disputed beats firing every run.
 
 ## E2E checklist runs
 

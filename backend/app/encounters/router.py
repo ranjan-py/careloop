@@ -24,8 +24,11 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.ai.care_plan import generate_care_plan
+from app.ai.encounter_summary import generate_encounter_summary
+from app.ai.executor import get_executor
 from app.ai.extraction import FactView
 from app.ai.pipeline import DatabaseStore, EncounterPipeline
+from app.evals.evaluators import run_online_evals
 from app.auth.session import require_clinician
 from app.config import get_settings
 from app.db import models as m
@@ -261,7 +264,29 @@ async def end_encounter(
                 )
             )
         care_plan.status = "in_review"
+
+        # Spec §12 step 4: encounter summary (pre-decision). Non-fatal on
+        # failure — summary is contextual, the care flow continues (§2.4).
+        if encounter.summary is None:
+            try:
+                generated = await generate_encounter_summary(
+                    encounter_id=encounter_id,
+                    patient_id=encounter.patient_id,
+                    facts=[_fact_view(f) for f in fact_rows],
+                    transcript_text=transcript_text,
+                    trace_id=encounter.trace_id,
+                )
+                encounter.summary = generated.text
+            except Exception as exc:  # noqa: BLE001
+                logger.warning("Encounter summary generation failed for %s: %s", encounter_id, exc)
         await session.commit()
+
+        # Spec §12 step 6: initial online evaluators. Failures degrade
+        # observability, never the care workflow.
+        try:
+            await run_online_evals(encounter_id)
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("Online evals failed for %s: %s", encounter_id, exc)
         actions = (
             await session.execute(
                 select(m.CarePlanAction).where(m.CarePlanAction.care_plan_id == care_plan.id)
@@ -349,15 +374,26 @@ async def encounter_stream(ws: WebSocket, encounter_id: str) -> None:
                 socket_open = False
 
     # AI loop wiring (spec §9): finalized segments feed the extraction
-    # pipeline; fact/suggestion changes stream to Columns B/C as envelopes.
-    async def on_fact(fact, change) -> None:
-        await send_safe(StateFactMessage(fact=fact, change=change))
+    # pipeline ON ITS OWN EVENT LOOP (app.ai.executor) — realtime audio can
+    # never starve model/DB work. Callbacks run on the pipeline loop and
+    # marshal WS sends back to THIS loop thread-safely.
+    main_loop = asyncio.get_running_loop()
+    executor = get_executor()
 
-    async def on_suggestion(sug) -> None:
-        await send_safe(SuggestionActiveMessage(suggestion=sug))
+    def on_fact(fact, change) -> None:
+        asyncio.run_coroutine_threadsafe(
+            send_safe(StateFactMessage(fact=fact, change=change)), main_loop
+        )
 
-    async def on_suggestion_remove(suggestion_id: str) -> None:
-        await send_safe(SuggestionRemoveMessage(suggestion_id=suggestion_id))
+    def on_suggestion(sug) -> None:
+        asyncio.run_coroutine_threadsafe(
+            send_safe(SuggestionActiveMessage(suggestion=sug)), main_loop
+        )
+
+    def on_suggestion_remove(suggestion_id: str) -> None:
+        asyncio.run_coroutine_threadsafe(
+            send_safe(SuggestionRemoveMessage(suggestion_id=suggestion_id)), main_loop
+        )
 
     pipeline: EncounterPipeline | None = None
     if patient_id is not None:
@@ -365,7 +401,7 @@ async def encounter_stream(ws: WebSocket, encounter_id: str) -> None:
             encounter_id=encounter_id,
             patient_id=patient_id,
             trace_id=trace_id,
-            store=DatabaseStore(session_factory),
+            store=DatabaseStore(),  # lazy factory — binds to the pipeline loop
             on_fact=on_fact,
             on_suggestion=on_suggestion,
             on_suggestion_remove=on_suggestion_remove,
@@ -388,7 +424,9 @@ async def encounter_stream(ws: WebSocket, encounter_id: str) -> None:
         finals_persisted += 1
         await send_safe(TranscriptFinalMessage(segment=segment))
         if pipeline is not None:
-            await pipeline.feed_final_segment(segment)
+            # Fire-and-forget onto the pipeline loop; feeding only buffers +
+            # arms the debounce there, so cycles run fully off this loop.
+            executor.submit(pipeline.feed_final_segment(segment))
 
     async def on_status(state: ConnectionState, detail: str) -> None:
         await send_safe(ConnStatusMessage(deepgram=state, detail=detail))
@@ -477,8 +515,9 @@ async def encounter_stream(ws: WebSocket, encounter_id: str) -> None:
                 await shutdown_streaming()
                 await relay.finalize()
                 if pipeline is not None:
-                    # Final extraction pass over any remaining buffer (spec §12 step 2).
-                    await pipeline.flush()
+                    # Final extraction pass over any remaining buffer (spec §12
+                    # step 2) — runs on the pipeline loop, awaited from here.
+                    await executor.run(pipeline.flush())
                 async with session_factory() as session:
                     encounter = await session.get(m.Encounter, encounter_id)
                     if encounter is not None:
@@ -498,7 +537,8 @@ async def encounter_stream(ws: WebSocket, encounter_id: str) -> None:
         await shutdown_streaming()
         await relay.close()
         if pipeline is not None:
-            await pipeline.close()
+            with contextlib.suppress(Exception):
+                await executor.run(pipeline.close())
         logger.info(
             "WS session closed for encounter %s: mode=%s client_audio_bytes=%d "
             "relay_bytes_sent=%d finals_persisted=%d ignored_replay_audio_bytes=%d",

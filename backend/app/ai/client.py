@@ -22,26 +22,39 @@ logger = logging.getLogger(__name__)
 
 SchemaT = TypeVar("SchemaT", bound=BaseModel)
 
-_client: AsyncOpenAI | None = None
+# Clients cached PER EVENT LOOP: httpx connections bind to the loop that uses
+# them, and the AI pipeline runs on its own loop thread (app.ai.executor).
+_clients: dict[int, AsyncOpenAI] = {}
 
 
 class ProviderNotConfiguredError(RuntimeError):
     """Raised when an AI call is attempted without a configured provider key."""
 
 
+def _loop_key() -> int:
+    import asyncio
+
+    try:
+        return id(asyncio.get_running_loop())
+    except RuntimeError:
+        return 0
+
+
 def get_client() -> AsyncOpenAI:
-    global _client
     settings = get_settings()
     if not settings.openai_api_key:
         raise ProviderNotConfiguredError(
             "OPENAI_API_KEY is not set — AI features are BLOCKED (real integration not verified)."
         )
-    if _client is None:
+    key = _loop_key()
+    client = _clients.get(key)
+    if client is None:
         # Per-request timeout + one retry: a single hung HTTP request must
         # never freeze the live encounter loop (observed in full-loop run:
         # one stalled call blocked the cycle task for the whole session).
-        _client = AsyncOpenAI(api_key=settings.openai_api_key, timeout=45.0, max_retries=1)
-    return _client
+        client = AsyncOpenAI(api_key=settings.openai_api_key, timeout=45.0, max_retries=1)
+        _clients[key] = client
+    return client
 
 
 async def call_model(
@@ -65,16 +78,27 @@ async def call_model(
       with {model, input_tokens, output_tokens, total_tokens} so tracing can
       record token usage/cost (spec §20) without changing the return type.
     """
+    import time as _time
+
     settings = get_settings()
     client = get_client()
     chosen_model = model or settings.openai_model
     logger.info("call_model task=%s model=%s prompt_version=%s", task, chosen_model, prompt_version)
-    response = await client.responses.parse(
-        model=chosen_model,
-        instructions=instructions,
-        input=input_text,
-        text_format=output_schema,
-    )
+    started = _time.monotonic()
+    try:
+        response = await client.responses.parse(
+            model=chosen_model,
+            instructions=instructions,
+            input=input_text,
+            text_format=output_schema,
+        )
+    except Exception as exc:
+        logger.warning(
+            "call_model task=%s FAILED after %.1fs: %s: %s",
+            task, _time.monotonic() - started, type(exc).__name__, exc,
+        )
+        raise
+    logger.info("call_model task=%s done in %.1fs", task, _time.monotonic() - started)
     parsed = response.output_parsed
     if parsed is None:
         raise ValueError(f"Model returned no parseable output for task '{task}'")

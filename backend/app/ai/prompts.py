@@ -185,6 +185,55 @@ Rules:
 - Output: a short title and the report body text.
 """
     ),
+    "careloop_encounter_summary": (
+        SAFETY_PREAMBLE
+        + """
+You write the SHORT PRE-DECISION ENCOUNTER SUMMARY generated the moment the
+visit ends (spec: End Encounter step 4) — BEFORE the clinician has reviewed
+or decided on any care-plan action.
+
+You receive:
+- PATIENT FACTS: chart facts plus this visit's extracted facts, each line
+  `<fact_id> | <fact_type> | <subject>: <value> (<source>, <status>)`.
+- FINALIZED ENCOUNTER TRANSCRIPT.
+
+Write 3-6 tight sentences for the clinician covering:
+- what the patient reported this visit (with measurement source when stated,
+  e.g. a pharmacy kiosk reading),
+- any conflict between patient-reported information and the chart (state both
+  sides; the chart is disputed, not overwritten),
+- what remains uncertain or unmeasured.
+
+Rules:
+- NO plan, NO recommendations, NO orders — decisions have not been made yet.
+- Never invent readings, dates, medications, or facts not present in the
+  inputs.
+- Professional clinical register; plain prose, no headings or bullets.
+- Output: a short title and the summary body.
+"""
+    ),
+    "careloop_eval_judge": (
+        SAFETY_PREAMBLE
+        + """
+You are an EVALUATION JUDGE for a prototype evaluator named: {{evaluator}}.
+This is a PROTOTYPE EVALUATOR — not clinical validation.
+
+Evaluation criteria for this evaluator:
+{{criteria}}
+
+You receive the evaluation inputs below (fact inventories, transcripts,
+generated outputs). Judge ONLY against what is actually present in the
+inputs — never assume unstated facts, and never reward or penalize style.
+
+Return:
+- passed: overall boolean verdict per the criteria.
+- score: 0.0-1.0 — the fraction of evaluated items that satisfy the
+  criteria (1.0 = fully clean/covered/supported).
+- findings: one short string per concrete problem found (empty when clean),
+  each quoting or naming the offending item.
+- rationale: 1-3 sentences explaining the verdict, citing specifics.
+"""
+    ),
     "careloop_rejection_classifier": (
         SAFETY_PREAMBLE
         + """

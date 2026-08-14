@@ -59,7 +59,9 @@ class PipelineConfig:
     min_words: int = 25
     max_buffer_seconds: float = 10.0
     debounce_seconds: float = 3.0
-    suggestion_cooldown_seconds: float = 15.0
+    # 45 s: with detached (never-cancelled) cycles, a 15 s cooldown produced
+    # 15-18 suggestions per encounter — churn the spec (§8C/§9) forbids.
+    suggestion_cooldown_seconds: float = 45.0
     max_active_suggestions: int = 2
     context_tail_chars: int = 600  # already-processed transcript tail kept for context
 
@@ -228,11 +230,18 @@ class DatabaseStore:
     """
 
     def __init__(self, session_factory: Any = None) -> None:
-        if session_factory is None:
-            from app.db.session import get_session_factory
+        # Lazy: resolved on FIRST USE so the factory binds to the loop the
+        # store actually runs on (the AI pipeline loop — app.ai.executor),
+        # never the loop the store object was constructed on.
+        self._session_factory_arg = session_factory
 
-            session_factory = get_session_factory()
-        self._session_factory = session_factory
+    @property
+    def _session_factory(self) -> Any:
+        if self._session_factory_arg is not None:
+            return self._session_factory_arg
+        from app.db.session import get_session_factory
+
+        return get_session_factory()
 
     async def _project(self, orm_facts: list[Any]) -> None:
         from app.context.projection import ProjectionError, project_facts
@@ -500,7 +509,15 @@ class EncounterPipeline:
         self._buffer.clear()
         self.policy.reset()
         self._cycle_task = asyncio.create_task(self._run_cycle(segments, decision))
-        await self._cycle_task
+        if force:
+            # flush(): completion is required before finalize continues.
+            await self._cycle_task
+        # Normal path: DETACHED. This method runs inside the debounce task,
+        # which _arm_debounce CANCELS on every new final segment — awaiting
+        # here forwarded that cancellation into the running cycle and killed
+        # the suggestion model call mid-flight on every streaming run
+        # (observed: extraction survived, suggestions never completed). The
+        # cycle re-arms the debounce itself when more segments are buffered.
 
     async def _log_trigger(
         self, stage: str, decision: str, reason: str, words: int, seconds: float, detail: dict | None = None
@@ -598,8 +615,15 @@ class EncounterPipeline:
             if view is not None:
                 await self._emit_fact(self._view_to_schema_fact(view, now_wall), "disputed")
 
-        # Non-empty diff -> next-best-question generation (spec §9 step 5).
-        await self._run_suggestions(changes, updated_inventory, minted_ids, window)
+        # Suggestion generation only when the cycle produced NEW or DISPUTED
+        # facts (spec §9 step 5) — pure value updates are not a state change
+        # that warrants interrupting the clinician (churn control, §8C).
+        if changes.new_facts or changes.disputed_ehr_fact_ids:
+            await self._run_suggestions(changes, updated_inventory, minted_ids, window)
+        else:
+            await self._log_trigger(
+                "suggestions", "skipped", "updates_only_no_new_facts", 0, 0.0
+            )
 
     async def _run_suggestions(
         self,
