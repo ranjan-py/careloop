@@ -104,6 +104,13 @@ instructions — schema-valid string, rendered raw. Fixes, verified for real:
   ~$0.02–0.03/encounter (~10× cheaper than the original gpt-5.2 config).
   Cost estimator prices conservatively off the pricier configured model.
 
+**FINAL DEMO CONFIGURATION (2026-08-14, definitive chain on enc_e2cde3f1db37):**
+nano (effort low; suggestions minimal) for extraction/suggestions/summary/judges
++ mini for care-plan/report generation. verify_full_loop PASS (25 facts, 8
+suggestions) · verify_hitl PASS · launch criteria **6/6 GREEN**: schema 100%,
+unsupported 0%, leakage 0, fidelity 100%, p95 NBA 2.2 s (<6 s), ~$0.05/encounter
+(conservative estimate at mini rates; blended actual ≈ $0.02–0.03).
+
 ## Repo hygiene
 
 **2026-08-14 — gitleaks (docker, zricethezav/gitleaks) over FULL git history
