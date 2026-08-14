@@ -1,0 +1,247 @@
+{
+  "label": "Synthetic demo evidence corpus — generic, demo-authored guideline snippets. NOT real clinical guidance. Not for patient care.",
+  "version": 1,
+  "snippet_count": 30,
+  "snippets": [
+    {
+      "id": "ev-001",
+      "title": "Confirming uncontrolled hypertension before therapy changes",
+      "body": "A single elevated office reading is not sufficient to label blood pressure uncontrolled. Confirm with at least two readings on separate occasions using a validated device and proper technique: seated, back supported, arm at heart level, correct cuff size, and five minutes of rest. When office and out-of-office readings disagree, out-of-office measurement with a validated device generally clarifies the picture. Document the measurement source and method alongside every recorded value, because treatment decisions should weight readings by their reliability.",
+      "topic_tags": ["hypertension", "bp_measurement", "diagnosis"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-002",
+      "title": "Stepwise approach to persistent blood pressure elevation",
+      "body": "When repeated readings remain above target on current therapy, work through a checklist before intensifying medication: verify adherence (including whether the patient has actually stopped a drug), confirm measurement technique and device reliability, review interfering substances such as NSAIDs and decongestants, and check for secondary contributors. Only after these are addressed should dose titration or an additional agent be considered. Escalating therapy on top of an unrecognized adherence gap is a common and avoidable error.",
+      "topic_tags": ["hypertension", "medication", "adherence"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-003",
+      "title": "Blood pressure targets in adults with diabetes",
+      "body": "Adults with both hypertension and type 2 diabetes are usually managed toward a tighter blood pressure target than the general population because combined vascular risk is higher. A commonly used demo target is below 130/80 mmHg when it can be reached without side effects such as dizziness or falls. Persistent readings near 150/95 in a patient with diabetes represent a meaningful care gap and warrant a structured review of medication status, measurement quality, and follow-up cadence.",
+      "topic_tags": ["hypertension", "type_2_diabetes", "targets"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-004",
+      "title": "First-line antihypertensive drug classes",
+      "body": "First-line options for most adults include ACE inhibitors, angiotensin receptor blockers (ARBs), thiazide-type diuretics, and calcium channel blockers. Class choice is individualized by comorbidity: ACE inhibitors or ARBs are often preferred with diabetes or albuminuria; calcium channel blockers are a practical alternative when an ACE inhibitor is not tolerated. Never combine an ACE inhibitor with an ARB — the combination raises the risk of hyperkalemia and kidney injury without added benefit.",
+      "topic_tags": ["hypertension", "medication", "ace_inhibitor", "arb"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-005",
+      "title": "Severely elevated blood pressure with symptoms",
+      "body": "Readings above roughly 180/120 mmHg accompanied by symptoms such as new headache, chest pain, breathlessness, visual change, or neurological deficit should be treated as a same-day escalation, not a routine titration problem. Asymptomatic severe elevation still requires prompt re-measurement and short-interval follow-up. The care plan in these situations prioritizes urgent evaluation over incremental outpatient adjustments.",
+      "topic_tags": ["hypertension", "escalation", "safety"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-006",
+      "title": "Dizziness in patients taking ACE inhibitors",
+      "body": "Dizziness or lightheadedness on an ACE inhibitor such as lisinopril most often reflects blood-pressure lowering itself: it is more likely after the first dose, after a dose increase, with volume depletion, or when combined with diuretics. Clarify the timing of symptoms relative to doses and posture (standing versus seated). Dizziness that led the patient to stop the drug should trigger a medication review — options include dose reduction, bedtime dosing, or switching class — rather than leaving the patient untreated.",
+      "topic_tags": ["ace_inhibitor", "side_effects", "dizziness", "medication"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-007",
+      "title": "ACE inhibitor cough",
+      "body": "A persistent dry cough occurs in a minority of patients on ACE inhibitors and can begin weeks to months after starting therapy. It resolves after discontinuation, usually within days to a few weeks. When cough is the limiting side effect, switching to an ARB — which provides similar kidney and blood-pressure benefits with a much lower cough rate — is the usual demo-guideline move. Do not simply stop antihypertensive therapy without a replacement plan.",
+      "topic_tags": ["ace_inhibitor", "side_effects", "cough", "arb"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-008",
+      "title": "Angioedema — the ACE inhibitor red flag",
+      "body": "Swelling of the lips, tongue, face, or airway on an ACE inhibitor is a rare but potentially life-threatening reaction. It contraindicates re-challenge with any ACE inhibitor and is an immediate-escalation event, not an outpatient titration question. Document the reaction prominently so that future prescribers do not reintroduce the class. This is distinct from common, manageable side effects such as dizziness or dry cough.",
+      "topic_tags": ["ace_inhibitor", "side_effects", "safety", "escalation"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-009",
+      "title": "Abrupt self-discontinuation of antihypertensives",
+      "body": "Patients frequently stop blood-pressure medication on their own after side effects, and the record often still shows the prescription as active. Untreated intervals lead to a rebound toward pre-treatment pressures within days to weeks. When a patient reports stopping a drug, record the stop as a patient-reported fact with its date and reason, keep it distinct from the EHR's prescription status, and reconcile explicitly at the visit rather than silently overwriting either record.",
+      "topic_tags": ["medication", "adherence", "hypertension", "reconciliation"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-010",
+      "title": "Potassium monitoring when starting or resuming ACE inhibitors or ARBs",
+      "body": "ACE inhibitors and ARBs reduce potassium excretion, so serum potassium and creatinine should be checked before starting or resuming therapy and again within one to two weeks of initiation or dose change. A potassium result several months old does not reflect the current state, especially if medication use has changed in the interval. In this demo corpus, a result older than about 90 days is treated as stale for medication decisions involving these classes.",
+      "topic_tags": ["potassium", "ace_inhibitor", "arb", "lab_monitoring"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-011",
+      "title": "Interpreting serum potassium on renin-angiotensin blockade",
+      "body": "A potassium of 3.5 to 5.0 mmol/L is generally acceptable on an ACE inhibitor or ARB. Values of 5.1 to 5.5 warrant dietary review, medication review, and early re-testing; values above 5.5 usually require holding the drug and repeating the test promptly. Chronic kidney disease amplifies the risk, so reduced eGFR plus renin-angiotensin blockade means closer monitoring intervals. A remote normal value — for example 4.2 mmol/L drawn three months ago — supports safety at that time, not today.",
+      "topic_tags": ["potassium", "ace_inhibitor", "ckd", "lab_monitoring"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-012",
+      "title": "Rechecking labs before restarting a stopped ACE inhibitor",
+      "body": "When a patient has stopped an ACE inhibitor and a restart or substitution is on the table, obtain current potassium and kidney function first if existing results are stale. The safe ordering is: updated labs, then the medication decision, then early follow-up. Restarting or switching blood-pressure therapy in a patient with borderline kidney function using months-old labs is a recognizable demo failure mode this corpus is designed to catch.",
+      "topic_tags": ["potassium", "ace_inhibitor", "lab_monitoring", "sequencing"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-013",
+      "title": "Staging kidney health with eGFR",
+      "body": "An estimated GFR of 45 to 59 mL/min/1.73 m² (demo stage G3a) indicates mildly to moderately reduced kidney function. A single value should be confirmed over time, but it already changes medication safety margins: renally cleared drugs may need adjustment, and drugs affecting kidney hemodynamics — ACE inhibitors, ARBs, NSAIDs, diuretics — deserve closer lab surveillance. An eGFR of 58 in a patient with hypertension and diabetes marks meaningful CKD risk and should be tracked, not filed away.",
+      "topic_tags": ["ckd", "egfr", "lab_monitoring"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-014",
+      "title": "Albuminuria testing (UACR) in diabetes and CKD risk",
+      "body": "Urine albumin-to-creatinine ratio (UACR) complements eGFR: it detects kidney damage before filtration declines and stratifies progression risk. Adults with type 2 diabetes should have UACR checked at least annually, and more often when results are abnormal or therapy changes. If a patient with diabetes, hypertension, and borderline eGFR has no recent UACR on file, adding it to the next lab order is a low-burden, high-information action.",
+      "topic_tags": ["ckd", "uacr", "type_2_diabetes", "lab_monitoring"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-015",
+      "title": "Monitoring cadence for declining kidney function",
+      "body": "For demo stage G3a CKD (eGFR 45-59), reassess eGFR and UACR at least annually, and within weeks after events that stress the kidneys: starting or stopping renin-angiotensin blockade, dehydration, or new NSAID use. Kidney results older than about four months in a patient whose medications have changed should be considered outdated for decision-making. Trend matters more than any single value — plot results over time rather than reacting to one number.",
+      "topic_tags": ["ckd", "egfr", "lab_monitoring", "follow_up"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-016",
+      "title": "ACE inhibitors and ARBs in CKD with albuminuria",
+      "body": "In patients with diabetes, hypertension, and albuminuria, ACE inhibitors and ARBs slow kidney disease progression and are usually continued despite a modest, expected creatinine rise after initiation. Stopping them removes that protection, so a patient-initiated stop is a prompt for structured review: address the side effect that caused the stop, recheck labs, and either resume, adjust, or substitute deliberately. The demo lesson: the response to intolerance is a plan, not an indefinite gap.",
+      "topic_tags": ["ckd", "ace_inhibitor", "arb", "type_2_diabetes"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-017",
+      "title": "A1C interpretation and targets in type 2 diabetes",
+      "body": "Hemoglobin A1C reflects average glucose over roughly three months. A common demo target for many adults with type 2 diabetes is below 7.0 percent, individualized upward for age, hypoglycemia risk, and comorbidity. An A1C of 7.8 percent is above target but not an emergency; if it is stable and the visit's active problem is elsewhere (for example uncontrolled blood pressure), deferring diabetes intensification can be a deliberate, documented choice rather than an oversight.",
+      "topic_tags": ["type_2_diabetes", "a1c", "targets"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-018",
+      "title": "Metformin as foundation therapy",
+      "body": "Metformin remains a foundation drug for type 2 diabetes: effective, weight-neutral, inexpensive, and safe at appropriate kidney function. Demo dosing guidance: continue at full dose when eGFR is 45 or above, reassess and consider dose reduction below 45, and stop below 30. Gastrointestinal upset is the common side effect and often improves when taken with food. A patient with eGFR 58 can generally continue metformin 1000 mg twice daily with routine kidney monitoring.",
+      "topic_tags": ["type_2_diabetes", "metformin", "ckd", "medication"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-019",
+      "title": "A1C testing frequency",
+      "body": "Check A1C roughly every three months when therapy has changed or glycemia is above target, and every six months when stable at target. An A1C drawn about three months ago remains reasonably current for a routine visit; it does not by itself need repeating today unless therapy is changing. This distinguishes it from stale results — recency standards differ by test and by what decision the result must support.",
+      "topic_tags": ["type_2_diabetes", "a1c", "lab_monitoring", "follow_up"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-020",
+      "title": "Hypoglycemia awareness for patients on glucose-lowering therapy",
+      "body": "Patients on insulin or sulfonylureas need explicit hypoglycemia education; metformin alone rarely causes low glucose. Symptoms such as tremor, sweating, and confusion warrant immediate carbohydrate intake and, if recurrent, a therapy review. When a patient on metformin monotherapy reports dizziness, hypoglycemia is possible but less likely than blood-pressure-related causes — clarify timing, posture, and relation to medication doses before attributing the symptom.",
+      "topic_tags": ["type_2_diabetes", "safety", "dizziness", "medication"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-021",
+      "title": "Home blood pressure monitoring protocol",
+      "body": "A useful home protocol: a validated upper-arm cuff, two readings one minute apart, morning and evening, for seven days, discarding day one and averaging the rest. Home averages run a few mmHg lower than office readings, so a home average at or above roughly 135/85 corresponds to office hypertension. Before prescribing any home-monitoring plan, confirm the patient actually owns or can obtain a validated device — a monitoring protocol without equipment is an empty instruction.",
+      "topic_tags": ["bp_measurement", "home_monitoring", "hypertension"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-022",
+      "title": "Pharmacy kiosk and public blood pressure machines",
+      "body": "Public kiosk machines — in pharmacies and grocery stores — vary in calibration, cuff fit, and positioning, and readings are taken without rest periods. Treat kiosk values as screening signals: useful for flagging possible elevation, insufficient alone for diagnosis or titration decisions. A patient-reported kiosk reading of about 150/95 supports concern and justifies obtaining reliable measurements; it does not by itself justify a medication change. Always record the measurement method (for example, pharmacy_kiosk) with the value.",
+      "topic_tags": ["bp_measurement", "kiosk", "hypertension", "provenance"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-023",
+      "title": "Choosing a monitoring plan the patient can execute",
+      "body": "Match the measurement plan to the patient's actual resources. If the patient has no home cuff, options in rough order of preference: provide or prescribe a validated device (cost and coverage permitting), schedule serial clinic or pharmacist-run readings, or use ambulatory monitoring where available. Prescribing twice-daily home readings to a patient without equipment is a known high-friction recommendation that clinicians frequently reject as a patient limitation — the plan should be adapted before it is issued.",
+      "topic_tags": ["bp_measurement", "home_monitoring", "patient_limitation", "adherence"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-024",
+      "title": "Measurement technique errors that inflate readings",
+      "body": "Common technique errors add real error: a too-small cuff, unsupported arm or back, crossed legs, talking during measurement, a full bladder, and caffeine or exertion within thirty minutes can each raise readings by several mmHg, and errors compound. When home or kiosk values drive decisions, review technique first. Teaching correct technique is a low-risk, high-yield action that belongs in most hypertension care plans.",
+      "topic_tags": ["bp_measurement", "technique", "hypertension"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-025",
+      "title": "Asking about adherence without blame",
+      "body": "Adherence conversations work better as normalized, open questions: 'Many people miss doses or stop medicines that bother them — how has it been going with yours?' Patients commonly stop drugs because of side effects, cost, complexity, or unclear benefit, and often do not volunteer it. Elicit the reason before proposing a fix, since each barrier has a different remedy: side effect → adjust or switch; cost → generic or formulary alternative; complexity → simplify regimen.",
+      "topic_tags": ["adherence", "communication", "medication"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-026",
+      "title": "Medication reconciliation at every visit",
+      "body": "Reconciliation means comparing what the record says against what the patient actually takes, dose by dose, including over-the-counter drugs and supplements. Discrepancies — the record shows a drug as active that the patient stopped, or the patient takes something unrecorded — are among the most common sources of care errors. Preserve both versions with provenance (EHR-stated versus patient-reported), mark the item disputed, and resolve it explicitly during the visit.",
+      "topic_tags": ["adherence", "reconciliation", "medication", "provenance"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-027",
+      "title": "Reducing regimen burden to improve adherence",
+      "body": "Adherence falls as regimen complexity rises. Where clinically equivalent, prefer once-daily dosing, combination pills, and 90-day fills. After any side-effect-driven discontinuation, the replacement plan should be at most as burdensome as the original — replacing one stopped daily pill with a twice-daily alternative plus extra monitoring invites a second failure. Cost matters too: verify the chosen agent is on the patient's formulary or available as a generic.",
+      "topic_tags": ["adherence", "medication", "cost"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-028",
+      "title": "Follow-up interval after a medication change",
+      "body": "After starting, stopping, or changing a blood-pressure medication, schedule follow-up within two to four weeks to assess response, side effects, and — for ACE inhibitors, ARBs, or diuretics — repeat labs. Waiting for updated information is often the correct next step: when labs are pending or measurements are unreliable, the demo-correct plan is labs and measurement first, decision at a short-interval follow-up, rather than acting immediately on stale or weak data.",
+      "topic_tags": ["follow_up", "medication", "sequencing", "lab_monitoring"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-029",
+      "title": "Recovering a missed follow-up visit",
+      "body": "A missed follow-up in a patient with uncontrolled hypertension is a care gap, not merely a scheduling event. Effective recovery: proactive outreach with a concrete rebooking offer, a shorter rebooked interval than originally planned, and removal of the barrier that caused the miss where identifiable (transport, work hours, forgotten reminders). A patient roughly thirty days past a missed visit with rising readings should be rebooked at the current encounter, not re-referred to the front desk.",
+      "topic_tags": ["follow_up", "care_gap", "outreach"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    },
+    {
+      "id": "ev-030",
+      "title": "Follow-up cadence for combined hypertension, diabetes, and CKD risk",
+      "body": "For a patient with hypertension above target, type 2 diabetes, and borderline kidney function, a reasonable demo cadence is: visit or structured contact every one to three months until blood pressure is controlled, labs (potassium, creatinine/eGFR, and UACR if due) timed before medication decisions, and A1C every three months while above target. Once stable, intervals lengthen. The cadence should be written into the care plan explicitly — 'follow up as needed' is not a plan.",
+      "topic_tags": ["follow_up", "hypertension", "type_2_diabetes", "ckd"],
+      "synthetic": true,
+      "source_label": "Synthetic demo guideline — not for clinical use"
+    }
+  ]
+}

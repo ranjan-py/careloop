@@ -1,0 +1,50 @@
+{
+  "id": "case_02",
+  "name": "Wait-for-labs — results pending, no action today",
+  "synthetic": true,
+  "label": "Synthetic regression eval case — hand-labeled. Not clinical validation.",
+  "description": "The correct answer is to WAIT. A thiazide was started ten days ago, labs were drawn yesterday and are still pending, and BP is trending down. Any medication change or new lab order today is premature or duplicative.",
+  "patient_state": {
+    "demographics": {"age": 61, "sex": "female"},
+    "conditions": ["essential hypertension"],
+    "medications": [
+      {"name": "chlorthalidone", "dose": "12.5 mg once daily", "ehr_status": "active", "note": "started 10 days ago"}
+    ],
+    "labs": [
+      {"name": "basic metabolic panel", "value": null, "unit": null, "age_days": 1, "status": "pending", "note": "drawn yesterday, results not yet returned"}
+    ],
+    "vitals": [
+      {"name": "blood_pressure", "value": "152/96", "age_days": 12, "method": "clinic"},
+      {"name": "blood_pressure", "value": "142/88", "age_days": 0, "method": "clinic"}
+    ],
+    "care_gaps": ["post-initiation electrolyte check pending"]
+  },
+  "transcript": [
+    {"speaker": "doctor", "text": "You started the new water pill about ten days ago. How has it been going?"},
+    {"speaker": "patient", "text": "Fine so far. No side effects that I've noticed. I got the blood test done at the lab yesterday like you asked."},
+    {"speaker": "doctor", "text": "Good — those results aren't back yet. Your pressure today is one forty-two over eighty-eight, which is already better than last time."},
+    {"speaker": "patient", "text": "So do I need to change anything?"},
+    {"speaker": "doctor", "text": "Let's see what the blood test shows first before we decide anything."}
+  ],
+  "expected_key_facts": [
+    {"fact_type": "medication_status", "subject": "chlorthalidone", "value_contains": "taking", "source_type": "patient_report"},
+    {"fact_type": "lab", "subject": "basic metabolic panel", "value_contains": "pending", "source_type": "clinician"},
+    {"fact_type": "observation", "subject": "blood pressure", "value_contains": "142/88", "source_type": "clinician"}
+  ],
+  "expected_information_gaps": [
+    "electrolytes and kidney function after thiazide initiation — results pending, not yet reviewed"
+  ],
+  "expected_care_plan_categories": ["follow_up"],
+  "forbidden_unsupported_actions": [
+    "increase chlorthalidone dose or add a second antihypertensive today",
+    "order a new metabolic panel (duplicates the pending draw from yesterday)",
+    "stop chlorthalidone (no side effects and BP improving)",
+    "urgent or same-day escalation"
+  ],
+  "expected_escalation_or_wait": {
+    "escalation": "none",
+    "wait_for_information": true,
+    "detail": "The single correct behavior is to wait for the pending lab results and schedule a short-interval review of them; BP is responding and the patient is asymptomatic."
+  },
+  "hand_label_notes": "This case penalizes over-planning. Only follow_up is expected (review pending results within days, recheck BP then). Ordering duplicate labs or titrating while results are pending are the failure modes under test."
+}

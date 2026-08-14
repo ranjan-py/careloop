@@ -1,0 +1,114 @@
+{
+  "cohort_label": "Synthetic demo cohort",
+  "description": "Precomputed synthetic aggregates of historical clinician decisions on AI-recommended care-plan Actions (spec section 23). No raw event rows; all numbers are demo-authored. Category keys use the shared RejectionCategory enum from contracts/CONTRACTS.md exactly.",
+  "synthetic": true,
+  "generated_note": "Aggregates simulate a 180-day window across 4 synthetic organizations.",
+  "window_days": 180,
+  "organizations": [
+    "Synthetic Org A (community clinic)",
+    "Synthetic Org B (multi-site primary care)",
+    "Synthetic Org C (rural health network)",
+    "Synthetic Org D (academic outpatient)"
+  ],
+  "total_events": 1730,
+  "decision_mix": {
+    "accepted_count": 1184,
+    "accepted_pct": 68.4,
+    "modified_count": 331,
+    "modified_pct": 19.1,
+    "rejected_count": 215,
+    "rejected_pct": 12.4
+  },
+  "reasons": [
+    {
+      "category": "patient_limitation",
+      "display_label": "Patient limitation",
+      "count": 58,
+      "pct_of_rejections": 27.0
+    },
+    {
+      "category": "missing_patient_information",
+      "display_label": "Missing patient information",
+      "count": 46,
+      "pct_of_rejections": 21.4
+    },
+    {
+      "category": "clinical_disagreement",
+      "display_label": "Clinical disagreement",
+      "count": 33,
+      "pct_of_rejections": 15.3
+    },
+    {
+      "category": "operational_workflow_limitation",
+      "display_label": "Operational/workflow limitation",
+      "count": 30,
+      "pct_of_rejections": 14.0
+    },
+    {
+      "category": "organization_protocol_constraint",
+      "display_label": "Organization/protocol constraint",
+      "count": 21,
+      "pct_of_rejections": 9.8
+    },
+    {
+      "category": "requires_supervision_escalation",
+      "display_label": "Requires supervision/escalation",
+      "count": 14,
+      "pct_of_rejections": 6.5
+    },
+    {
+      "category": "other",
+      "display_label": "Other",
+      "count": 13,
+      "pct_of_rejections": 6.0
+    }
+  ],
+  "reasons_note": "Counts are over the 215 rejected events. Modified events carry free-text reasons, not enum categories, and are not included here.",
+  "high_friction": [
+    {
+      "action_title": "Home BP twice daily",
+      "recommended_count": 400,
+      "modify_reject_count": 152,
+      "modify_reject_pct": 38,
+      "trend": "increasing",
+      "top_reason_category": "patient_limitation",
+      "top_reason_display": "Patient limitation",
+      "top_reason_detail": "patient lacks home-monitoring equipment",
+      "organizations_observed": 4
+    },
+    {
+      "action_title": "Medication titration",
+      "recommended_count": 540,
+      "modify_reject_count": 92,
+      "modify_reject_pct": 17,
+      "trend": "stable",
+      "top_reason_category": "missing_patient_information",
+      "top_reason_display": "Missing patient information",
+      "top_reason_detail": "current labs unavailable at decision time",
+      "organizations_observed": 4
+    },
+    {
+      "action_title": "Specialist referral",
+      "recommended_count": 300,
+      "modify_reject_count": 36,
+      "modify_reject_pct": 12,
+      "trend": "stable",
+      "top_reason_category": "organization_protocol_constraint",
+      "top_reason_display": "Organization/protocol constraint",
+      "top_reason_detail": "referral requires internal review sign-off first",
+      "organizations_observed": 3
+    },
+    {
+      "action_title": "Updated lab",
+      "recommended_count": 250,
+      "modify_reject_count": 10,
+      "modify_reject_pct": 4,
+      "trend": "decreasing",
+      "top_reason_category": "operational_workflow_limitation",
+      "top_reason_display": "Operational/workflow limitation",
+      "top_reason_detail": "limited in-clinic phlebotomy capacity",
+      "organizations_observed": 4
+    }
+  ],
+  "high_friction_note": "Top action types by modify/reject rate. The four listed types cover 1490 of the 1730 total events; remaining events span lower-volume action types not shown."
+}

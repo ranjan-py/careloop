@@ -1,0 +1,319 @@
+# CareLoop — full stack: app services + self-hosted Langfuse (spec §19/§28).
+#
+# Langfuse services are vendored from the OFFICIAL langfuse/langfuse docker-compose.yml
+#   source: https://github.com/langfuse/langfuse/blob/main/docker-compose.yml
+#   commit: 351890a0086626e5e025be31cc0f00ca6cf352d3 (2026-08-12)
+# with the demo-required modifications listed in infra/langfuse/README.md
+# (all Langfuse host ports stripped except langfuse-web 3100->3000; env vars wired
+# to the names in .env.example; healthchecks added; ClickHouse memory capped).
+# A pristine copy of the upstream file is kept at infra/langfuse/upstream-docker-compose.yml.
+#
+# Host ports (documented, spec §28): frontend 3000, backend 8000,
+# neo4j 7474 (browser) / 7687 (bolt), langfuse-web 3100. Nothing else is exposed.
+#
+# Docker Desktop: allocate 12-16 GB VM memory for the full stack.
+# Never run `docker compose config` on stage — it prints resolved secrets.
+
+name: careloop
+
+services:
+  # ---------------------------------------------------------------------------
+  # App services
+  # ---------------------------------------------------------------------------
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATA_DIR: /data
+    volumes:
+      # Seed corpus, scenario bundle, and audio fixture (read-only; spec §30/§33)
+      - ./data:/data:ro
+    ports:
+      - "8000:8000"
+    depends_on:
+      app-postgres:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+    healthcheck:
+      # /api/health returns 200 even when third-party deps are degraded (spec §31).
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health', timeout=5)"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 30s
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "3000:3000"
+    depends_on:
+      # service_started (not healthy) on purpose: the UI must come up even if the
+      # backend is degraded, so error states stay visible instead of hidden.
+      backend:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 30s
+
+  app-postgres:
+    # Authoritative app event/system record (spec §17). Internal only — no host port.
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${APP_POSTGRES_USER:-careloop}
+      POSTGRES_PASSWORD: ${APP_POSTGRES_PASSWORD:-careloop-local}
+      POSTGRES_DB: ${APP_POSTGRES_DB:-careloop}
+      TZ: UTC
+      PGTZ: UTC
+    volumes:
+      - app_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  neo4j:
+    # Longitudinal context graph (spec §17). Browser 7474 / Bolt 7687 exposed for
+    # the demo's Neo4j-browser moment. Heap capped per spec §28.
+    image: neo4j:5.26-community
+    restart: unless-stopped
+    environment:
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:-careloop-neo4j-local}
+      # Duplicated as a plain var so the healthcheck below can read it.
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD:-careloop-neo4j-local}
+      NEO4J_server_memory_heap_initial__size: 512M
+      NEO4J_server_memory_heap_max__size: 1G
+      NEO4J_server_memory_pagecache_size: 512M
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j_data:/data
+    healthcheck:
+      # cypher-shell round-trip proves bolt + auth are actually ready, not just HTTP up.
+      test: ["CMD-SHELL", "cypher-shell -a bolt://localhost:7687 -u neo4j -p \"$${NEO4J_PASSWORD}\" 'RETURN 1' > /dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 15s
+      retries: 12
+      start_period: 60s
+
+  # ---------------------------------------------------------------------------
+  # Self-hosted Langfuse — vendored from the official compose (see header).
+  # Modifications vs upstream are tagged with "# MODIFIED:" comments.
+  # ---------------------------------------------------------------------------
+  langfuse-worker:
+    image: docker.io/langfuse/langfuse-worker:4
+    restart: always
+    depends_on: &langfuse-depends-on
+      langfuse-postgres: # MODIFIED: upstream service name "postgres" renamed to avoid clashing with app-postgres
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+    # MODIFIED: upstream host port 127.0.0.1:3030:3030 stripped (spec §19)
+    environment: &langfuse-worker-env
+      NEXTAUTH_URL: http://localhost:3100 # MODIFIED: langfuse-web is published on host port 3100
+      DATABASE_URL: postgresql://langfuse:${LANGFUSE_POSTGRES_PASSWORD:-langfuse-pg-local}@langfuse-postgres:5432/langfuse # MODIFIED: wired to .env names
+      SALT: ${LANGFUSE_SALT:-careloop-local-salt-change-me} # MODIFIED: wired to LANGFUSE_SALT
+      # MODIFIED: wired to LANGFUSE_ENCRYPTION_KEY; all-zero fallback is local-demo-only
+      # (generate a real one via `openssl rand -hex 32` — must be 64 hex chars if set).
+      ENCRYPTION_KEY: ${LANGFUSE_ENCRYPTION_KEY:-0000000000000000000000000000000000000000000000000000000000000000}
+      TELEMETRY_ENABLED: "false" # MODIFIED: no phoning home from the demo box
+      LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: ${LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES:-false}
+      LANGFUSE_LLM_CONNECTION_WHITELISTED_HOST: ${LANGFUSE_LLM_CONNECTION_WHITELISTED_HOST:-}
+      LANGFUSE_LLM_CONNECTION_WHITELISTED_IPS: ${LANGFUSE_LLM_CONNECTION_WHITELISTED_IPS:-}
+      LANGFUSE_LLM_CONNECTION_WHITELISTED_IP_SEGMENTS: ${LANGFUSE_LLM_CONNECTION_WHITELISTED_IP_SEGMENTS:-}
+      CLICKHOUSE_MIGRATION_URL: clickhouse://clickhouse:9000
+      CLICKHOUSE_URL: http://clickhouse:8123
+      CLICKHOUSE_USER: clickhouse
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-clickhouse-local} # MODIFIED: wired to .env name
+      CLICKHOUSE_CLUSTER_ENABLED: "false"
+      LANGFUSE_USE_AZURE_BLOB: "false"
+      LANGFUSE_USE_OCI_NATIVE_OBJECT_STORAGE: "false"
+      LANGFUSE_OCI_AUTH_TYPE: workload_identity
+      LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse
+      LANGFUSE_S3_EVENT_UPLOAD_REGION: auto
+      LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID: minio
+      LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-minio-local-password} # MODIFIED: wired to .env name
+      LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://minio:9000
+      LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
+      LANGFUSE_S3_EVENT_UPLOAD_PREFIX: "events/"
+      LANGFUSE_S3_MEDIA_UPLOAD_BUCKET: langfuse
+      LANGFUSE_S3_MEDIA_UPLOAD_REGION: auto
+      LANGFUSE_S3_MEDIA_UPLOAD_ACCESS_KEY_ID: minio
+      LANGFUSE_S3_MEDIA_UPLOAD_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-minio-local-password} # MODIFIED: wired to .env name
+      LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://minio:9000
+      LANGFUSE_S3_MEDIA_UPLOAD_FORCE_PATH_STYLE: "true"
+      LANGFUSE_S3_MEDIA_UPLOAD_PREFIX: "media/"
+      LANGFUSE_OBSERVATION_FIELD_OVERFLOW_ENABLED: "false"
+      LANGFUSE_OBSERVATION_FIELD_SIZE_LIMIT_BYTES: "2097152"
+      LANGFUSE_S3_BATCH_EXPORT_ENABLED: "false"
+      LANGFUSE_S3_BATCH_EXPORT_BUCKET: langfuse
+      LANGFUSE_S3_BATCH_EXPORT_PREFIX: "exports/"
+      LANGFUSE_S3_BATCH_EXPORT_REGION: auto
+      LANGFUSE_S3_BATCH_EXPORT_ENDPOINT: http://minio:9000
+      LANGFUSE_S3_BATCH_EXPORT_EXTERNAL_ENDPOINT: http://minio:9000 # MODIFIED: minio not host-exposed; batch export disabled anyway
+      LANGFUSE_S3_BATCH_EXPORT_ACCESS_KEY_ID: minio
+      LANGFUSE_S3_BATCH_EXPORT_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-minio-local-password} # MODIFIED: wired to .env name
+      LANGFUSE_S3_BATCH_EXPORT_FORCE_PATH_STYLE: "true"
+      LANGFUSE_INGESTION_QUEUE_DELAY_MS: ${LANGFUSE_INGESTION_QUEUE_DELAY_MS:-}
+      LANGFUSE_INGESTION_CLICKHOUSE_WRITE_INTERVAL_MS: ${LANGFUSE_INGESTION_CLICKHOUSE_WRITE_INTERVAL_MS:-}
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_AUTH: ${REDIS_AUTH:-redis-local} # MODIFIED: wired to .env name
+      LANGFUSE_BULLMQ_SKIP_REDIS_VERSION_CHECK: "false"
+      REDIS_TLS_ENABLED: "false"
+      REDIS_TLS_CA: /certs/ca.crt
+      REDIS_TLS_CERT: /certs/redis.crt
+      REDIS_TLS_KEY: /certs/redis.key
+      EMAIL_FROM_ADDRESS: ""
+      SMTP_CONNECTION_URL: ""
+    healthcheck:
+      # MODIFIED: added (upstream has none); worker serves /api/health on 3030 internally.
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:3030/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 120s
+
+  langfuse-web:
+    image: docker.io/langfuse/langfuse:4
+    restart: always
+    depends_on: *langfuse-depends-on
+    ports:
+      - "3100:3000" # MODIFIED: host 3100 (frontend owns 3000) — the ONLY exposed Langfuse port (spec §19)
+    environment:
+      <<: *langfuse-worker-env
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-careloop-nextauth-local} # MODIFIED: wired to .env name
+      # MODIFIED: upstream points the browser-facing media endpoint at host-exposed minio
+      # (localhost:9090); minio is internal-only here, so keep the in-network endpoint.
+      # Trace media uploads viewed from the browser are not needed for this demo.
+      LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://minio:9000
+      # Headless init (spec §19): only takes effect on FIRST boot against an empty
+      # langfuse_postgres_data volume; `make reset-demo` recreates volumes so it re-runs.
+      # Values must MATCH LANGFUSE_PUBLIC_KEY/LANGFUSE_SECRET_KEY used by the backend client.
+      LANGFUSE_INIT_ORG_ID: ${LANGFUSE_INIT_ORG_ID:-}
+      LANGFUSE_INIT_ORG_NAME: ${LANGFUSE_INIT_ORG_NAME:-}
+      LANGFUSE_INIT_PROJECT_ID: ${LANGFUSE_INIT_PROJECT_ID:-}
+      LANGFUSE_INIT_PROJECT_NAME: ${LANGFUSE_INIT_PROJECT_NAME:-}
+      LANGFUSE_INIT_PROJECT_PUBLIC_KEY: ${LANGFUSE_INIT_PROJECT_PUBLIC_KEY:-}
+      LANGFUSE_INIT_PROJECT_SECRET_KEY: ${LANGFUSE_INIT_PROJECT_SECRET_KEY:-}
+      LANGFUSE_INIT_USER_EMAIL: ${LANGFUSE_INIT_USER_EMAIL:-}
+      LANGFUSE_INIT_USER_NAME: ${LANGFUSE_INIT_USER_NAME:-}
+      LANGFUSE_INIT_USER_PASSWORD: ${LANGFUSE_INIT_USER_PASSWORD:-}
+    healthcheck:
+      # MODIFIED: added (upstream has none). /api/public/ready = readiness (spec §19
+      # requires health/readiness to pass). Generous start_period: first boot runs
+      # Postgres + ClickHouse migrations, which can take minutes.
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:3000/api/public/ready || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 120s
+
+  clickhouse:
+    image: docker.io/clickhouse/clickhouse-server:25.12
+    restart: always
+    user: "101:101"
+    environment:
+      CLICKHOUSE_DB: default
+      CLICKHOUSE_USER: clickhouse
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-clickhouse-local} # MODIFIED: wired to .env name
+    # MODIFIED: memory cap added (spec §28). Modern ClickHouse is cgroup-aware and
+    # self-limits below the container cap.
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+    volumes:
+      - langfuse_clickhouse_data:/var/lib/clickhouse
+      - langfuse_clickhouse_logs:/var/log/clickhouse-server
+    # MODIFIED: upstream host ports 8123/9000 stripped (spec §19)
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8123/ping || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 1s
+
+  minio:
+    image: cgr.dev/chainguard/minio
+    restart: always
+    entrypoint: sh
+    # create the 'langfuse' bucket before starting the service (upstream behavior)
+    command: -c 'mkdir -p /data/langfuse && minio server --address ":9000" --console-address ":9001" /data'
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minio-local-password} # MODIFIED: wired to .env name
+    # MODIFIED: upstream host ports 9090/9091 stripped (spec §19)
+    volumes:
+      - langfuse_minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 1s
+      timeout: 5s
+      retries: 5
+      start_period: 1s
+
+  redis:
+    image: docker.io/redis:7
+    restart: always
+    command: >
+      --requirepass ${REDIS_AUTH:-redis-local}
+      --maxmemory-policy noeviction
+    # MODIFIED: upstream host port 6379 stripped (spec §19); REDIS_AUTH wired to .env name
+    volumes:
+      - langfuse_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 10s
+      retries: 10
+
+  langfuse-postgres:
+    # MODIFIED: upstream service name "postgres" renamed; host port 5432 stripped;
+    # version pinned; credentials fixed to a dedicated langfuse user/db.
+    image: postgres:17
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U langfuse"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+    environment:
+      POSTGRES_USER: langfuse
+      POSTGRES_PASSWORD: ${LANGFUSE_POSTGRES_PASSWORD:-langfuse-pg-local} # MODIFIED: wired to .env name
+      POSTGRES_DB: langfuse
+      TZ: UTC
+      PGTZ: UTC
+    volumes:
+      - langfuse_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  # App volumes
+  app_postgres_data:
+    driver: local
+  neo4j_data:
+    driver: local
+  # Langfuse volumes (recreated by `make reset-demo` so headless init re-runs)
+  langfuse_postgres_data:
+    driver: local
+  langfuse_clickhouse_data:
+    driver: local
+  langfuse_clickhouse_logs:
+    driver: local
+  langfuse_minio_data:
+    driver: local
+  langfuse_redis_data:
+    driver: local

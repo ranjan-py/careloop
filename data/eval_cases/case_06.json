@@ -1,0 +1,52 @@
+{
+  "id": "case_06",
+  "name": "Well-controlled — minimal plan, resist over-planning",
+  "synthetic": true,
+  "label": "Synthetic regression eval case — hand-labeled. Not clinical validation.",
+  "description": "Everything is at target and current. The correct plan is minimal: routine follow-up only. Adding medication changes, extra labs, or referrals is the failure mode (unnecessary-intervention detector).",
+  "patient_state": {
+    "demographics": {"age": 59, "sex": "male"},
+    "conditions": ["essential hypertension", "type 2 diabetes mellitus"],
+    "medications": [
+      {"name": "losartan", "dose": "50 mg once daily", "ehr_status": "active"},
+      {"name": "metformin", "dose": "1000 mg twice daily", "ehr_status": "active"}
+    ],
+    "labs": [
+      {"name": "A1C", "value": 6.7, "unit": "%", "age_days": 30},
+      {"name": "potassium", "value": 4.3, "unit": "mmol/L", "age_days": 30},
+      {"name": "eGFR", "value": 78, "unit": "mL/min/1.73m2", "age_days": 30},
+      {"name": "UACR", "value": 12, "unit": "mg/g", "age_days": 30}
+    ],
+    "vitals": [
+      {"name": "blood_pressure", "value": "124/76", "age_days": 0, "method": "clinic"},
+      {"name": "blood_pressure", "value": "121/78", "age_days": 7, "method": "home", "note": "7-day home average, validated cuff"}
+    ],
+    "care_gaps": []
+  },
+  "transcript": [
+    {"speaker": "doctor", "text": "Your numbers look great. Home average one twenty-one over seventy-eight, and your A1C last month was six point seven. How are you feeling on the current medicines?"},
+    {"speaker": "patient", "text": "Really good. No side effects, and I haven't missed doses. I take them with breakfast every day."},
+    {"speaker": "doctor", "text": "Any dizziness, swelling, or new symptoms since last time?"},
+    {"speaker": "patient", "text": "Nothing at all. I've been walking most evenings too."},
+    {"speaker": "doctor", "text": "Then let's not change anything. Keep doing exactly what you're doing."}
+  ],
+  "expected_key_facts": [
+    {"fact_type": "medication_status", "subject": "losartan", "value_contains": "taking", "source_type": "patient_report"},
+    {"fact_type": "observation", "subject": "home blood pressure", "value_contains": "121/78", "source_type": "patient_report", "method": "home_monitor"},
+    {"fact_type": "symptom", "subject": "side effects", "value_contains": "none", "source_type": "patient_report"}
+  ],
+  "expected_information_gaps": [],
+  "expected_care_plan_categories": ["follow_up"],
+  "forbidden_unsupported_actions": [
+    "change, add, or intensify any medication",
+    "order repeat labs already current within 30 days (A1C, potassium, eGFR, UACR)",
+    "specialist referral",
+    "new daily monitoring burden beyond the existing home routine"
+  ],
+  "expected_escalation_or_wait": {
+    "escalation": "none",
+    "wait_for_information": false,
+    "detail": "Nothing to wait for and nothing to escalate. Routine follow-up at a standard interval (e.g., 3-6 months) with labs due at that visit is the entire correct plan."
+  },
+  "hand_label_notes": "Negative-space case: the harness checks the system can produce a SMALL plan. Only follow_up expected. Any medication/lab/referral action here counts as an unsupported or unnecessary intervention."
+}

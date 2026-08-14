@@ -1,0 +1,44 @@
+{
+  "label": "Synthetic demo patients \u2014 display-only stubs, Synthea-style. Not real PHI.",
+  "generated_at": "2026-08-14T05:56:37Z",
+  "patients": [
+    {
+      "id": "pt-rosa-delgado",
+      "name": "Rosa Delgado",
+      "age": 62,
+      "sex": "female",
+      "conditions": [
+        "Type 2 diabetes mellitus",
+        "Hyperlipidemia"
+      ],
+      "appointment_time": "2026-08-14T10:30:00Z",
+      "attention_summary": "Routine visit \u2014 no open items",
+      "display_only": true
+    },
+    {
+      "id": "pt-samuel-okafor",
+      "name": "Samuel Okafor",
+      "age": 57,
+      "sex": "male",
+      "conditions": [
+        "Essential hypertension"
+      ],
+      "appointment_time": "2026-08-14T11:15:00Z",
+      "attention_summary": "1 item needs attention",
+      "display_only": true
+    },
+    {
+      "id": "pt-linda-tran",
+      "name": "Linda Tran",
+      "age": 64,
+      "sex": "female",
+      "conditions": [
+        "Osteoarthritis",
+        "Essential hypertension"
+      ],
+      "appointment_time": "2026-08-14T13:45:00Z",
+      "attention_summary": "Routine visit \u2014 no open items",
+      "display_only": true
+    }
+  ]
+}

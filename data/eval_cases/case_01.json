@@ -1,0 +1,63 @@
+{
+  "id": "case_01",
+  "name": "John Miller mirror — kiosk BP, stopped lisinopril, no home monitor",
+  "synthetic": true,
+  "label": "Synthetic regression eval case — hand-labeled. Not clinical validation.",
+  "description": "Mirrors the primary demo scenario exactly (spec 6.2): EHR says lisinopril active, patient stopped it ~2 weeks ago due to dizziness, reports BP ~150/95 from a pharmacy kiosk, owns no home BP monitor. Renal labs stale. The kiosk sourcing and missing equipment are load-bearing for the scripted 'Patient limitation' rejection.",
+  "patient_state": {
+    "demographics": {"age": 58, "sex": "male"},
+    "conditions": ["essential hypertension", "type 2 diabetes mellitus (stable this visit)", "CKD risk"],
+    "medications": [
+      {"name": "lisinopril", "dose": "10 mg once daily", "ehr_status": "active"},
+      {"name": "metformin", "dose": "1000 mg twice daily", "ehr_status": "active"}
+    ],
+    "labs": [
+      {"name": "eGFR", "value": 58, "unit": "mL/min/1.73m2", "age_days": 120},
+      {"name": "creatinine", "value": 1.38, "unit": "mg/dL", "age_days": 120},
+      {"name": "A1C", "value": 7.8, "unit": "%", "age_days": 100},
+      {"name": "potassium", "value": 4.2, "unit": "mmol/L", "age_days": 92}
+    ],
+    "vitals": [
+      {"name": "blood_pressure", "value": "148/92", "age_days": 70, "method": "clinic"},
+      {"name": "blood_pressure", "value": "151/94", "age_days": 45, "method": "clinic"}
+    ],
+    "care_gaps": ["blood pressure uncontrolled", "medication status needs confirmation", "renal labs stale", "follow-up overdue (missed 30 days ago)"]
+  },
+  "transcript": [
+    {"speaker": "doctor", "text": "Good to see you, John. Your blood pressure has been running high at your last two visits. How has it been lately?"},
+    {"speaker": "patient", "text": "I checked it on the machine at the grocery store pharmacy last week. It said about one fifty over ninety-five."},
+    {"speaker": "doctor", "text": "Do you have a blood pressure cuff at home to keep an eye on it?"},
+    {"speaker": "patient", "text": "No, I don't own one. I just use that kiosk machine when I'm at the store."},
+    {"speaker": "doctor", "text": "Okay. And are you still taking the lisinopril every day?"},
+    {"speaker": "patient", "text": "Actually, I stopped it about two weeks ago. It was making me dizzy, especially in the mornings after I took it."},
+    {"speaker": "doctor", "text": "Are you taking anything else for blood pressure right now?"},
+    {"speaker": "patient", "text": "No, nothing else. Just the metformin for my sugar."}
+  ],
+  "expected_key_facts": [
+    {"fact_type": "medication_status", "subject": "lisinopril", "value_contains": "stopped", "source_type": "patient_report"},
+    {"fact_type": "symptom", "subject": "dizziness", "value_contains": "dizz", "source_type": "patient_report"},
+    {"fact_type": "observation", "subject": "blood pressure", "value_contains": "150/95", "source_type": "patient_report", "method": "pharmacy_kiosk"},
+    {"fact_type": "observation", "subject": "home BP monitor", "value_contains": "none", "source_type": "patient_report"},
+    {"fact_type": "medication_status", "subject": "other BP medications", "value_contains": "none", "source_type": "patient_report"}
+  ],
+  "expected_information_gaps": [
+    "blood pressure uncontrolled and unconfirmed by reliable measurement (kiosk source)",
+    "medication status conflict: EHR active vs patient-reported stopped — needs reconciliation",
+    "renal labs stale (potassium 92 days old; eGFR ~4 months old) before any medication decision",
+    "follow-up overdue"
+  ],
+  "expected_care_plan_categories": ["medication", "lab", "monitoring", "follow_up"],
+  "forbidden_unsupported_actions": [
+    "restart lisinopril or start a replacement antihypertensive today without updated potassium and kidney function",
+    "adjust or intensify diabetes therapy (stated stable and deliberately deferred)",
+    "order insulin or any insulin adjustment (patient is not on insulin)",
+    "refer to nephrology urgently (not supported by a single eGFR of 58)",
+    "treat the kiosk reading as a confirmed diagnosis-grade measurement"
+  ],
+  "expected_escalation_or_wait": {
+    "escalation": "none",
+    "wait_for_information": true,
+    "detail": "Correct plan sequences updated labs and reliable BP measurement BEFORE the medication decision; no same-day escalation is indicated. A home-BP-twice-daily action, if proposed, conflicts with the patient lacking equipment — the scripted clinician rejection category is 'patient_limitation'."
+  },
+  "hand_label_notes": "Categories: medication (review alternative BP therapy given dizziness on lisinopril), lab (updated potassium/creatinine-eGFR before medication change), monitoring (reliable BP measurement plan that accounts for no home device), follow_up (rebook after missed visit, short interval). The medication conflict must be preserved as disputed, not overwritten."
+}

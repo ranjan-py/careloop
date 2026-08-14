@@ -1,0 +1,173 @@
+"""Mocked workflow tools (spec §15) + server-side permission-tier enforcement.
+
+These tools never contact a real health system. They return structured,
+clearly-labeled demo records; persistence of ToolExecution rows is handled by
+the executor. Exactly ONE tool (create_demo_lab_order) supports deterministic
+failure simulation per spec §15 — do not add it to others.
+"""
+
+from __future__ import annotations
+
+from datetime import datetime, timezone
+from typing import Callable
+
+from pydantic import BaseModel, Field
+
+from app.schemas.core import ActionCategory, ActionStatus, PermissionTier
+
+DEMO_EXECUTION_LABEL = "Demo execution — no real clinical order was placed."
+
+
+class ToolResult(BaseModel):
+    tool_name: str
+    status: str  # "executed" | "failed"
+    summary: str
+    record: dict = Field(default_factory=dict)
+    demo_label: str = DEMO_EXECUTION_LABEL
+    executed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+# ---------------------------------------------------------------------------
+# Permission-tier enforcement (spec §13/§15 — tiers must visibly bite)
+# ---------------------------------------------------------------------------
+
+
+class PermissionCheck(BaseModel):
+    allowed: bool
+    tier: PermissionTier
+    reason: str
+
+
+#: Action statuses that constitute an explicit clinician decision to proceed.
+_DECIDED_STATUSES: frozenset[str] = frozenset({"approved", "modified"})
+
+
+def check_permission(permission: PermissionTier, action_status: ActionStatus) -> PermissionCheck:
+    """Server-side gate run before ANY tool invocation.
+
+    - auto_demo: may execute without a clinician decision (exactly one low-risk
+      action in the demo plan), still surfaced with a review affordance.
+    - clinician_review: executes only after approve/modify.
+    - required_clinician_decision: hard stop — never executes without an
+      explicit clinician decision.
+    """
+    if action_status in ("rejected", "denied"):
+        return PermissionCheck(
+            allowed=False, tier=permission,
+            reason=f"Action status '{action_status}' — rejected actions never execute.",
+        )
+    if permission == "auto_demo":
+        return PermissionCheck(
+            allowed=True, tier=permission,
+            reason="auto_demo tier — executes automatically (review affordance shown in UI).",
+        )
+    if action_status in _DECIDED_STATUSES:
+        return PermissionCheck(
+            allowed=True, tier=permission,
+            reason=f"Explicit clinician decision recorded (status '{action_status}').",
+        )
+    if permission == "required_clinician_decision":
+        return PermissionCheck(
+            allowed=False, tier=permission,
+            reason="BLOCKED — required_clinician_decision tier has no explicit clinician decision.",
+        )
+    return PermissionCheck(
+        allowed=False, tier=permission,
+        reason=f"BLOCKED — clinician_review tier requires approve/modify (status '{action_status}').",
+    )
+
+
+# ---------------------------------------------------------------------------
+# The six mocked tools
+# ---------------------------------------------------------------------------
+
+
+def create_demo_lab_order(
+    *, patient_id: str, tests: list[str] | None = None, simulate_failure: bool = False
+) -> ToolResult:
+    """Mock lab order. The ONE tool with deterministic failure simulation (spec §15)."""
+    if simulate_failure:
+        return ToolResult(
+            tool_name="create_demo_lab_order",
+            status="failed",
+            summary="Simulated deterministic failure: demo lab system rejected the order.",
+            record={"patient_id": patient_id, "tests": tests or [], "failure_mode": "simulated"},
+        )
+    ordered = tests or ["basic_metabolic_panel", "potassium", "creatinine_egfr"]
+    return ToolResult(
+        tool_name="create_demo_lab_order",
+        status="executed",
+        summary=f"Demo lab request created ({', '.join(ordered)}).",
+        record={"patient_id": patient_id, "tests": ordered, "order_type": "demo_lab_order"},
+    )
+
+
+def schedule_demo_followup(*, patient_id: str, in_days: int = 14) -> ToolResult:
+    return ToolResult(
+        tool_name="schedule_demo_followup",
+        status="executed",
+        summary=f"Demo follow-up scheduled in ~{in_days} days.",
+        record={"patient_id": patient_id, "in_days": in_days, "order_type": "demo_followup"},
+    )
+
+
+def save_demo_medication_review(*, patient_id: str, medication: str, note: str = "") -> ToolResult:
+    return ToolResult(
+        tool_name="save_demo_medication_review",
+        status="executed",
+        summary=f"Medication review saved for {medication}.",
+        record={"patient_id": patient_id, "medication": medication, "note": note},
+    )
+
+
+def generate_patient_instructions(*, patient_id: str, care_plan_id: str) -> ToolResult:
+    """Registers the patient-instructions artifact record (the auto_demo action).
+
+    The instruction TEXT itself is generated by the real OpenAI pipeline
+    (app.ai) at finalize time — this mocked tool only creates the demo
+    delivery/record entry and never fabricates model output.
+    """
+    return ToolResult(
+        tool_name="generate_patient_instructions",
+        status="executed",
+        summary="Patient instructions record created (content generated by the AI pipeline).",
+        record={"patient_id": patient_id, "care_plan_id": care_plan_id, "artifact": "patient_instructions"},
+    )
+
+
+def create_demo_referral(*, patient_id: str, specialty: str) -> ToolResult:
+    return ToolResult(
+        tool_name="create_demo_referral",
+        status="executed",
+        summary=f"Demo referral created to {specialty}.",
+        record={"patient_id": patient_id, "specialty": specialty, "order_type": "demo_referral"},
+    )
+
+
+def send_demo_outreach_task(*, patient_id: str, purpose: str) -> ToolResult:
+    return ToolResult(
+        tool_name="send_demo_outreach_task",
+        status="executed",
+        summary=f"Demo outreach task queued: {purpose}.",
+        record={"patient_id": patient_id, "purpose": purpose, "order_type": "demo_outreach_task"},
+    )
+
+
+#: Allowed tool per care-plan action category (tool-selection validity, spec §22.1).
+CATEGORY_TOOL_MAP: dict[ActionCategory, str] = {
+    "lab": "create_demo_lab_order",
+    "follow_up": "schedule_demo_followup",
+    "medication": "save_demo_medication_review",
+    "referral": "create_demo_referral",
+    "monitoring": "send_demo_outreach_task",
+    "other": "generate_patient_instructions",
+}
+
+TOOLS: dict[str, Callable[..., ToolResult]] = {
+    "create_demo_lab_order": create_demo_lab_order,
+    "schedule_demo_followup": schedule_demo_followup,
+    "save_demo_medication_review": save_demo_medication_review,
+    "generate_patient_instructions": generate_patient_instructions,
+    "create_demo_referral": create_demo_referral,
+    "send_demo_outreach_task": send_demo_outreach_task,
+}

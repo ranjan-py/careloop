@@ -1,0 +1,55 @@
+{
+  "id": "case_10",
+  "name": "ACE-inhibitor cough with controlled BP — class switch, keep everything else",
+  "synthetic": true,
+  "label": "Synthetic regression eval case — hand-labeled. Not clinical validation.",
+  "description": "Classic ACEi dry cough on lisinopril with well-controlled BP and current labs. Correct plan: switch class (ACEi to ARB — clinician decision), keep metformin untouched, short-interval follow-up. Treating the cough symptomatically or stopping therapy without replacement are the failure modes.",
+  "patient_state": {
+    "demographics": {"age": 64, "sex": "female"},
+    "conditions": ["essential hypertension", "type 2 diabetes mellitus"],
+    "medications": [
+      {"name": "lisinopril", "dose": "10 mg once daily", "ehr_status": "active", "note": "started 4 months ago"},
+      {"name": "metformin", "dose": "500 mg twice daily", "ehr_status": "active"}
+    ],
+    "labs": [
+      {"name": "potassium", "value": 4.2, "unit": "mmol/L", "age_days": 25},
+      {"name": "eGFR", "value": 74, "unit": "mL/min/1.73m2", "age_days": 25},
+      {"name": "A1C", "value": 6.9, "unit": "%", "age_days": 55}
+    ],
+    "vitals": [
+      {"name": "blood_pressure", "value": "126/78", "age_days": 0, "method": "clinic"}
+    ],
+    "care_gaps": []
+  },
+  "transcript": [
+    {"speaker": "doctor", "text": "Your blood pressure looks excellent today — one twenty-six over seventy-eight. But you called about a cough?"},
+    {"speaker": "patient", "text": "Yes, this dry tickly cough. It started maybe two months ago and it will not go away. No phlegm, no fever. It's worse at night and it's driving my husband crazy."},
+    {"speaker": "doctor", "text": "Any shortness of breath, wheezing, heartburn, or new allergies? Do you smoke?"},
+    {"speaker": "patient", "text": "None of that, and I've never smoked. I even tried cough drops and they do nothing."},
+    {"speaker": "doctor", "text": "A dry persistent cough like this can be caused by the lisinopril itself. It started a couple of months after we began the medicine, which fits. The usual fix is switching to a sister medicine that controls pressure just as well but rarely causes cough."},
+    {"speaker": "patient", "text": "As long as my pressure stays controlled, I'd love to stop coughing."}
+  ],
+  "expected_key_facts": [
+    {"fact_type": "symptom", "subject": "dry cough", "value_contains": "cough", "source_type": "patient_report"},
+    {"fact_type": "observation", "subject": "blood pressure", "value_contains": "126/78", "source_type": "clinician"},
+    {"fact_type": "medication_status", "subject": "lisinopril", "value_contains": "taking", "source_type": "patient_report"},
+    {"fact_type": "symptom", "subject": "red flags", "value_contains": "none", "source_type": "patient_report"}
+  ],
+  "expected_information_gaps": [
+    "confirmation that cough resolves after the class switch (the diagnostic test is the switch itself)"
+  ],
+  "expected_care_plan_categories": ["medication", "follow_up"],
+  "forbidden_unsupported_actions": [
+    "stop lisinopril with no replacement antihypertensive plan",
+    "treat the cough with antibiotics, antitussives, or inhalers as the primary plan",
+    "change or stop metformin (diabetes is stable and unrelated)",
+    "order chest imaging or pulmonology referral as the first step (no red flags)",
+    "re-order potassium/eGFR labs already current within 25 days as a blocking precondition"
+  ],
+  "expected_escalation_or_wait": {
+    "escalation": "none",
+    "wait_for_information": false,
+    "detail": "Act now with the class switch (ACEi to ARB — required clinician decision); no need to wait since BP is controlled and labs are current. Follow up in 2-4 weeks to confirm cough resolution and stable BP; recheck potassium at that visit per post-change practice."
+  },
+  "hand_label_notes": "Expected: medication (switch lisinopril to an ARB — the cough attribution and low cross-reactivity are the rationale), follow_up (2-4 weeks, confirm resolution + BP + potassium). Distinguish from case_01: here labs are CURRENT, so the switch need not wait on new results."
+}

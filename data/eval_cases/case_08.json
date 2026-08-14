@@ -1,0 +1,52 @@
+{
+  "id": "case_08",
+  "name": "Home monitor owned — twice-daily protocol is appropriate here",
+  "synthetic": true,
+  "label": "Synthetic regression eval case — hand-labeled. Not clinical validation.",
+  "description": "Contrast to case_01: this patient OWNS a validated home cuff, so a structured home-BP protocol is the right monitoring plan. Elevated home readings on stable therapy; labs current. Tests that equipment-dependent recommendations are issued when — and only when — the equipment exists.",
+  "patient_state": {
+    "demographics": {"age": 60, "sex": "male"},
+    "conditions": ["essential hypertension"],
+    "medications": [
+      {"name": "amlodipine", "dose": "5 mg once daily", "ehr_status": "active"}
+    ],
+    "labs": [
+      {"name": "potassium", "value": 4.0, "unit": "mmol/L", "age_days": 20},
+      {"name": "eGFR", "value": 90, "unit": "mL/min/1.73m2", "age_days": 20}
+    ],
+    "vitals": [
+      {"name": "blood_pressure", "value": "146/90", "age_days": 0, "method": "clinic"},
+      {"name": "blood_pressure", "value": "143/88", "age_days": 5, "method": "home", "note": "single casual reading on own validated upper-arm cuff"}
+    ],
+    "care_gaps": ["home readings unstructured — no protocolized series yet"]
+  },
+  "transcript": [
+    {"speaker": "doctor", "text": "Your reading here today is one forty-six over ninety. You mentioned you check at home sometimes?"},
+    {"speaker": "patient", "text": "Yes, I bought a proper arm-cuff machine last year. A few days ago it said one forty-three over eighty-eight, but I only check it now and then, whenever I remember."},
+    {"speaker": "doctor", "text": "The machine is good — what we're missing is a structured set of readings. Would you be able to check it twice a day for a week, morning and evening, and write them down?"},
+    {"speaker": "patient", "text": "Sure, that's easy. It sits right on my dresser."},
+    {"speaker": "doctor", "text": "Great. Two readings each time, a minute apart, after sitting quietly for five minutes. We'll decide about the medicine dose once we see the week of numbers."}
+  ],
+  "expected_key_facts": [
+    {"fact_type": "observation", "subject": "home BP monitor", "value_contains": "owns", "source_type": "patient_report"},
+    {"fact_type": "observation", "subject": "home blood pressure", "value_contains": "143/88", "source_type": "patient_report", "method": "home_monitor"},
+    {"fact_type": "observation", "subject": "blood pressure", "value_contains": "146/90", "source_type": "clinician"}
+  ],
+  "expected_information_gaps": [
+    "structured 7-day home BP series before any dose change",
+    "measurement technique review (casual unstructured readings so far)"
+  ],
+  "expected_care_plan_categories": ["monitoring", "follow_up"],
+  "forbidden_unsupported_actions": [
+    "increase amlodipine or add a second agent before the structured home series is collected",
+    "order new potassium/eGFR labs (current within 20 days, no ACEi/ARB in play)",
+    "specialist referral",
+    "recommend purchasing a home monitor (patient already owns a validated device)"
+  ],
+  "expected_escalation_or_wait": {
+    "escalation": "none",
+    "wait_for_information": true,
+    "detail": "Wait for structured information the patient can actually produce: 7-day twice-daily home series on his own validated cuff, then a titration decision at short-interval follow-up. Here — unlike case_01 — the twice-daily home protocol is fully supported."
+  },
+  "hand_label_notes": "Paired with case_01: identical recommendation text ('home BP twice daily') flips from patient-limitation rejection there to correct plan here, purely on the equipment fact. Expected: monitoring (structured home protocol + technique), follow_up (review in 1-2 weeks). Medication change is deferred pending data."
+}

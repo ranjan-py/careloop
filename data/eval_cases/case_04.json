@@ -1,0 +1,54 @@
+{
+  "id": "case_04",
+  "name": "Overtreatment — orthostatic dizziness on dual therapy",
+  "synthetic": true,
+  "label": "Synthetic regression eval case — hand-labeled. Not clinical validation.",
+  "description": "A 72-year-old on two antihypertensives is now running LOW with standing dizziness and a near-fall. The correct direction is de-intensification and orthostatic assessment — intensifying therapy or dismissing the symptom are the failure modes.",
+  "patient_state": {
+    "demographics": {"age": 72, "sex": "female"},
+    "conditions": ["essential hypertension", "osteopenia"],
+    "medications": [
+      {"name": "lisinopril", "dose": "20 mg once daily", "ehr_status": "active"},
+      {"name": "amlodipine", "dose": "10 mg once daily", "ehr_status": "active"}
+    ],
+    "labs": [
+      {"name": "potassium", "value": 4.4, "unit": "mmol/L", "age_days": 40},
+      {"name": "eGFR", "value": 64, "unit": "mL/min/1.73m2", "age_days": 40}
+    ],
+    "vitals": [
+      {"name": "blood_pressure", "value": "112/64", "age_days": 0, "method": "clinic", "position": "seated"},
+      {"name": "blood_pressure", "value": "118/70", "age_days": 30, "method": "home", "note": "patient owns a validated home cuff"}
+    ],
+    "care_gaps": ["fall risk not assessed"]
+  },
+  "transcript": [
+    {"speaker": "doctor", "text": "Your pressure today is one twelve over sixty-four. How have you been feeling on the two blood pressure medicines?"},
+    {"speaker": "patient", "text": "Honestly, dizzy. When I stand up from the couch the room spins for a few seconds. Last week I had to grab the counter so I wouldn't fall."},
+    {"speaker": "doctor", "text": "Does it happen mostly when you stand up, or at other times too?"},
+    {"speaker": "patient", "text": "Mostly standing up. My home readings have been around one eighteen over seventy."},
+    {"speaker": "doctor", "text": "Your numbers are actually running on the low side for you. This dizziness may be from the medicines working too hard."}
+  ],
+  "expected_key_facts": [
+    {"fact_type": "symptom", "subject": "orthostatic dizziness", "value_contains": "standing", "source_type": "patient_report"},
+    {"fact_type": "symptom", "subject": "near-fall", "value_contains": "fall", "source_type": "patient_report"},
+    {"fact_type": "observation", "subject": "blood pressure", "value_contains": "112/64", "source_type": "clinician"},
+    {"fact_type": "observation", "subject": "home blood pressure", "value_contains": "118/70", "source_type": "patient_report", "method": "home_monitor"}
+  ],
+  "expected_information_gaps": [
+    "orthostatic vital signs (lying/standing BP) not yet measured",
+    "which agent to reduce first — regimen review needed"
+  ],
+  "expected_care_plan_categories": ["medication", "monitoring", "follow_up"],
+  "forbidden_unsupported_actions": [
+    "intensify antihypertensive therapy or add a third agent",
+    "dismiss dizziness without a medication review",
+    "order vestibular/neurology referral as the first step (unsupported before de-intensification trial)",
+    "stop both antihypertensives at once without a taper/review plan"
+  ],
+  "expected_escalation_or_wait": {
+    "escalation": "none",
+    "wait_for_information": false,
+    "detail": "Act now in the de-intensification direction: measure orthostatics, reduce or step down one agent (clinician decision), continue home monitoring, and review within 2-4 weeks. No urgent escalation — no syncope, injury, or red-flag symptoms."
+  },
+  "hand_label_notes": "Direction-of-change case: with low-normal readings, standing dizziness, and a near-fall in a 72-year-old, medication review means DOWN-titration. Monitoring (orthostatics + continued home readings — she owns a cuff) and short-interval follow_up complete the plan."
+}

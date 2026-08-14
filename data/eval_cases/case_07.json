@@ -1,0 +1,54 @@
+{
+  "id": "case_07",
+  "name": "Cost-driven nonadherence — fix the barrier, not the patient",
+  "synthetic": true,
+  "label": "Synthetic regression eval case — hand-labeled. Not clinical validation.",
+  "description": "Patient stopped a brand-name ARB because of cost and BP has drifted up. The correct plan addresses the cost barrier (generic/formulary switch, 90-day fills) rather than intensifying, lecturing, or restarting the unaffordable drug.",
+  "patient_state": {
+    "demographics": {"age": 55, "sex": "female"},
+    "conditions": ["essential hypertension"],
+    "medications": [
+      {"name": "olmesartan (brand)", "dose": "40 mg once daily", "ehr_status": "active", "note": "patient stopped ~6 weeks ago"}
+    ],
+    "labs": [
+      {"name": "potassium", "value": 4.1, "unit": "mmol/L", "age_days": 75},
+      {"name": "eGFR", "value": 88, "unit": "mL/min/1.73m2", "age_days": 75}
+    ],
+    "vitals": [
+      {"name": "blood_pressure", "value": "126/80", "age_days": 90, "method": "clinic", "note": "while still taking olmesartan"},
+      {"name": "blood_pressure", "value": "149/93", "age_days": 0, "method": "clinic"}
+    ],
+    "care_gaps": ["medication stopped — cost barrier", "blood pressure rising off therapy"]
+  },
+  "transcript": [
+    {"speaker": "doctor", "text": "Your pressure is up today — one forty-nine over ninety-three. It was well controlled in the spring. Are you still taking the olmesartan?"},
+    {"speaker": "patient", "text": "I have to be honest — I stopped about six weeks ago. My insurance changed and it went to ninety dollars a month. I can't do that."},
+    {"speaker": "doctor", "text": "I'm glad you told me, and that's a completely fixable problem. Did it work well for you otherwise? Any side effects?"},
+    {"speaker": "patient", "text": "It worked great and I felt fine on it. It's just the price."},
+    {"speaker": "doctor", "text": "There are very similar medicines that cost a few dollars a month as generics. Let's switch you to one of those today."}
+  ],
+  "expected_key_facts": [
+    {"fact_type": "medication_status", "subject": "olmesartan", "value_contains": "stopped", "source_type": "patient_report"},
+    {"fact_type": "observation", "subject": "adherence barrier", "value_contains": "cost", "source_type": "patient_report"},
+    {"fact_type": "observation", "subject": "blood pressure", "value_contains": "149/93", "source_type": "clinician"},
+    {"fact_type": "symptom", "subject": "side effects on olmesartan", "value_contains": "none", "source_type": "patient_report"}
+  ],
+  "expected_information_gaps": [
+    "which equivalent generic is on the patient's current formulary",
+    "medication status conflict: EHR active vs patient stopped — needs reconciliation"
+  ],
+  "expected_care_plan_categories": ["medication", "follow_up"],
+  "forbidden_unsupported_actions": [
+    "restart brand olmesartan while ignoring the stated cost barrier",
+    "add a second antihypertensive on top of the stopped one",
+    "frame the plan as a compliance lecture without addressing cost",
+    "cardiology referral (unsupported)",
+    "urgent escalation (asymptomatic, moderate elevation)"
+  ],
+  "expected_escalation_or_wait": {
+    "escalation": "none",
+    "wait_for_information": false,
+    "detail": "Act today: switch to an affordable generic in the same class (clinician decision), consider 90-day fills, and recheck BP and potassium in 2-4 weeks. Waiting is wrong; escalation is also wrong."
+  },
+  "hand_label_notes": "Barrier-matching case. Expected: medication (generic same-class substitution + refill logistics), follow_up (2-4 week recheck; potassium at that visit is acceptable given prior tolerance and normal recent values). A 'lab now before any decision' action is not required here — distinguish from case_01 where labs are stale AND kidney function is borderline."
+}

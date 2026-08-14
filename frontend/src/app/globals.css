@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+/*
+ * CareLoop design tokens — contracts/CONTRACTS.md "Design tokens" (spec §25,
+ * echo-not-clone): ink #1B2430 on warm off-white #F7F6F3, serif display,
+ * sans body, mono uppercase eyebrows, ONE strong blue pill CTA, green/red
+ * status, thin warm-tan hairline dividers. Desktop-first 1280px+.
+ */
+
+@theme inline {
+  --font-display: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  --font-body: var(--font-dm-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+@theme {
+  /* surfaces */
+  --color-paper: #f7f6f3;
+  --color-card: #ffffff;
+  --color-well: #f1efe9;
+
+  /* ink */
+  --color-ink: #1b2430;
+  --color-ink-muted: #5b6472;
+  --color-ink-faint: #8a93a1;
+
+  /* hairlines */
+  --color-hairline: #e7e0d2;
+  --color-hairline-strong: #d8cfbc;
+
+  /* the one strong blue CTA */
+  --color-cta: #2557d6;
+  --color-cta-hover: #1e49b8;
+  --color-cta-soft: #eaf0fc;
+
+  /* status */
+  --color-good: #1f7a4d;
+  --color-good-soft: #e6f2ea;
+  --color-bad: #be3d3d;
+  --color-bad-soft: #f9e9e7;
+  --color-warn: #a8722a;
+  --color-warn-soft: #f7eedd;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-cta-soft);
+}

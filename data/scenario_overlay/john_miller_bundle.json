@@ -1,0 +1,5099 @@
+{
+  "resourceType": "Bundle",
+  "id": "john-miller-scenario",
+  "meta": {
+    "tag": [
+      {
+        "system": "https://careloop.demo/tags/source_class",
+        "code": "synthea_ehr",
+        "display": "synthea_ehr"
+      },
+      {
+        "system": "https://careloop.demo/tags/data_provenance",
+        "code": "synthetic",
+        "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+      },
+      {
+        "system": "https://careloop.demo/tags/data_provenance",
+        "code": "scenario_overlay",
+        "display": "Deterministic scenario overlay \u2014 provenance: synthea_base+overlay (selected_bundle.json)"
+      }
+    ]
+  },
+  "type": "collection",
+  "timestamp": "2026-08-14T05:56:37Z",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-627f-c98e9c02db42",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "e2671843-9a01-099e-627f-c98e9c02db42",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-encounter"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "official",
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "e2671843-9a01-099e-627f-c98e9c02db42"
+          }
+        ],
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "162673000",
+                "display": "General examination of patient (procedure)"
+              }
+            ],
+            "text": "General examination of patient (procedure)"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "participant": [
+          {
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                    "code": "PPRF",
+                    "display": "primary performer"
+                  }
+                ],
+                "text": "primary performer"
+              }
+            ],
+            "period": {
+              "start": "1991-07-25T04:51:51+00:00",
+              "end": "1991-07-25T05:06:51+00:00"
+            },
+            "individual": {
+              "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+              "display": "Dr. Buck819 Johnson679"
+            }
+          }
+        ],
+        "period": {
+          "start": "1991-07-25T04:51:51+00:00",
+          "end": "1991-07-25T05:06:51+00:00"
+        },
+        "location": [
+          {
+            "location": {
+              "reference": "Location?identifier=https://github.com/synthetichealth/synthea|786cbf67-35fa-3af2-a759-4c5454b43168",
+              "display": "ESSEX COUNTY PRIMARY CARE"
+            }
+          }
+        ],
+        "serviceProvider": {
+          "reference": "Organization?identifier=https://github.com/synthetichealth/synthea|5f7663da-4b19-3629-b8f2-fb07d75421d9",
+          "display": "ESSEX COUNTY PRIMARY CARE"
+        }
+      },
+      "request": {
+        "method": "POST",
+        "url": "Encounter"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-3374-b5cefabba6fa",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "e2671843-9a01-099e-3374-b5cefabba6fa",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition-encounter-diagnosis"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "encounter-diagnosis",
+                "display": "Encounter Diagnosis"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "714628002",
+              "display": "Prediabetes (finding)"
+            }
+          ],
+          "text": "Prediabetes (finding)"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-627f-c98e9c02db42"
+        },
+        "onsetDateTime": "1991-07-25T04:51:51+00:00",
+        "recordedDate": "1991-07-25T04:51:51+00:00"
+      },
+      "request": {
+        "method": "POST",
+        "url": "Condition"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-c251-98d0565aad96",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "e2671843-9a01-099e-c251-98d0565aad96",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition-encounter-diagnosis"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "encounter-diagnosis",
+                "display": "Encounter Diagnosis"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "271737000",
+              "display": "Anemia (disorder)"
+            }
+          ],
+          "text": "Anemia (disorder)"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-627f-c98e9c02db42"
+        },
+        "onsetDateTime": "1991-07-25T04:51:51+00:00",
+        "recordedDate": "1991-07-25T04:51:51+00:00"
+      },
+      "request": {
+        "method": "POST",
+        "url": "Condition"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-9f2b-2d257fc41908",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "e2671843-9a01-099e-9f2b-2d257fc41908",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-encounter"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "official",
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "e2671843-9a01-099e-9f2b-2d257fc41908"
+          }
+        ],
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "162673000",
+                "display": "General examination of patient (procedure)"
+              }
+            ],
+            "text": "General examination of patient (procedure)"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "participant": [
+          {
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                    "code": "PPRF",
+                    "display": "primary performer"
+                  }
+                ],
+                "text": "primary performer"
+              }
+            ],
+            "period": {
+              "start": "2013-06-06T04:51:51+00:00",
+              "end": "2013-06-06T05:06:51+00:00"
+            },
+            "individual": {
+              "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+              "display": "Dr. Buck819 Johnson679"
+            }
+          }
+        ],
+        "period": {
+          "start": "2013-06-06T04:51:51+00:00",
+          "end": "2013-06-06T05:06:51+00:00"
+        },
+        "location": [
+          {
+            "location": {
+              "reference": "Location?identifier=https://github.com/synthetichealth/synthea|786cbf67-35fa-3af2-a759-4c5454b43168",
+              "display": "ESSEX COUNTY PRIMARY CARE"
+            }
+          }
+        ],
+        "serviceProvider": {
+          "reference": "Organization?identifier=https://github.com/synthetichealth/synthea|5f7663da-4b19-3629-b8f2-fb07d75421d9",
+          "display": "ESSEX COUNTY PRIMARY CARE"
+        }
+      },
+      "request": {
+        "method": "POST",
+        "url": "Encounter"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-93fa-6e4cd340adbc",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "e2671843-9a01-099e-93fa-6e4cd340adbc",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition-encounter-diagnosis"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "encounter-diagnosis",
+                "display": "Encounter Diagnosis"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "44054006",
+              "display": "Diabetes mellitus type 2 (disorder)"
+            }
+          ],
+          "text": "Diabetes mellitus type 2 (disorder)"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-9f2b-2d257fc41908"
+        },
+        "onsetDateTime": "2013-06-06T04:51:51+00:00",
+        "recordedDate": "2013-06-06T04:51:51+00:00"
+      },
+      "request": {
+        "method": "POST",
+        "url": "Condition"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-5da1-7c123e74831c",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "e2671843-9a01-099e-5da1-7c123e74831c",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-encounter"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "official",
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "e2671843-9a01-099e-5da1-7c123e74831c"
+          }
+        ],
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "162673000",
+                "display": "General examination of patient (procedure)"
+              }
+            ],
+            "text": "General examination of patient (procedure)"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "participant": [
+          {
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                    "code": "PPRF",
+                    "display": "primary performer"
+                  }
+                ],
+                "text": "primary performer"
+              }
+            ],
+            "period": {
+              "start": "2014-06-12T04:51:51+00:00",
+              "end": "2014-06-12T05:06:51+00:00"
+            },
+            "individual": {
+              "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+              "display": "Dr. Buck819 Johnson679"
+            }
+          }
+        ],
+        "period": {
+          "start": "2014-06-12T04:51:51+00:00",
+          "end": "2014-06-12T05:06:51+00:00"
+        },
+        "location": [
+          {
+            "location": {
+              "reference": "Location?identifier=https://github.com/synthetichealth/synthea|786cbf67-35fa-3af2-a759-4c5454b43168",
+              "display": "ESSEX COUNTY PRIMARY CARE"
+            }
+          }
+        ],
+        "serviceProvider": {
+          "reference": "Organization?identifier=https://github.com/synthetichealth/synthea|5f7663da-4b19-3629-b8f2-fb07d75421d9",
+          "display": "ESSEX COUNTY PRIMARY CARE"
+        }
+      },
+      "request": {
+        "method": "POST",
+        "url": "Encounter"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "e2671843-9a01-099e-af14-34d4ded1a2ef",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition-encounter-diagnosis"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "encounter-diagnosis",
+                "display": "Encounter Diagnosis"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "59621000",
+              "display": "Essential hypertension (disorder)"
+            }
+          ],
+          "text": "Essential hypertension (disorder)"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-5da1-7c123e74831c"
+        },
+        "onsetDateTime": "2014-06-12T04:51:51+00:00",
+        "recordedDate": "2014-06-12T04:51:51+00:00"
+      },
+      "request": {
+        "method": "POST",
+        "url": "Condition"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-6ee3-33104f59297a",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "e2671843-9a01-099e-6ee3-33104f59297a",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition-encounter-diagnosis"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "encounter-diagnosis",
+                "display": "Encounter Diagnosis"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "80394007",
+              "display": "Hyperglycemia (disorder)"
+            }
+          ],
+          "text": "Hyperglycemia (disorder)"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-5da1-7c123e74831c"
+        },
+        "onsetDateTime": "2014-06-12T04:51:51+00:00",
+        "recordedDate": "2014-06-12T04:51:51+00:00"
+      },
+      "request": {
+        "method": "POST",
+        "url": "Condition"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-54e0-638e52f7af28",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "e2671843-9a01-099e-54e0-638e52f7af28",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition-encounter-diagnosis"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "encounter-diagnosis",
+                "display": "Encounter Diagnosis"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "302870006",
+              "display": "Hypertriglyceridemia (disorder)"
+            }
+          ],
+          "text": "Hypertriglyceridemia (disorder)"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-5da1-7c123e74831c"
+        },
+        "onsetDateTime": "2014-06-12T04:51:51+00:00",
+        "recordedDate": "2014-06-12T04:51:51+00:00"
+      },
+      "request": {
+        "method": "POST",
+        "url": "Condition"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-5ca7-e3e6866ec69f",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "e2671843-9a01-099e-5ca7-e3e6866ec69f",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition-encounter-diagnosis"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "encounter-diagnosis",
+                "display": "Encounter Diagnosis"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "237602007",
+              "display": "Metabolic syndrome X (disorder)"
+            }
+          ],
+          "text": "Metabolic syndrome X (disorder)"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-5da1-7c123e74831c"
+        },
+        "onsetDateTime": "2014-06-12T04:51:51+00:00",
+        "recordedDate": "2014-06-12T04:51:51+00:00"
+      },
+      "request": {
+        "method": "POST",
+        "url": "Condition"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-c17b-a42e1a17d480",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "e2671843-9a01-099e-c17b-a42e1a17d480",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-encounter"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "official",
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "e2671843-9a01-099e-c17b-a42e1a17d480"
+          }
+        ],
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "162673000",
+                "display": "General examination of patient (procedure)"
+              }
+            ],
+            "text": "General examination of patient (procedure)"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "participant": [
+          {
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                    "code": "PPRF",
+                    "display": "primary performer"
+                  }
+                ],
+                "text": "primary performer"
+              }
+            ],
+            "period": {
+              "start": "2015-06-18T04:51:51+00:00",
+              "end": "2015-06-18T05:06:51+00:00"
+            },
+            "individual": {
+              "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+              "display": "Dr. Buck819 Johnson679"
+            }
+          }
+        ],
+        "period": {
+          "start": "2015-06-18T04:51:51+00:00",
+          "end": "2015-06-18T05:06:51+00:00"
+        },
+        "location": [
+          {
+            "location": {
+              "reference": "Location?identifier=https://github.com/synthetichealth/synthea|786cbf67-35fa-3af2-a759-4c5454b43168",
+              "display": "ESSEX COUNTY PRIMARY CARE"
+            }
+          }
+        ],
+        "serviceProvider": {
+          "reference": "Organization?identifier=https://github.com/synthetichealth/synthea|5f7663da-4b19-3629-b8f2-fb07d75421d9",
+          "display": "ESSEX COUNTY PRIMARY CARE"
+        }
+      },
+      "request": {
+        "method": "POST",
+        "url": "Encounter"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-d48b-ac44f8ac7f54",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "e2671843-9a01-099e-d48b-ac44f8ac7f54",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "completed",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community",
+                "display": "Community"
+              }
+            ],
+            "text": "Community"
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "310798",
+              "display": "Hydrochlorothiazide 25 MG Oral Tablet"
+            }
+          ],
+          "text": "Hydrochlorothiazide 25 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-c17b-a42e1a17d480"
+        },
+        "authoredOn": "2015-06-18T04:51:51+00:00",
+        "requester": {
+          "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+          "display": "Dr. Buck819 Johnson679"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+            "display": "Essential hypertension (disorder)"
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "sequence": 1,
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1.0,
+                "periodUnit": "d"
+              }
+            },
+            "asNeededBoolean": false,
+            "doseAndRate": [
+              {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                      "code": "ordered",
+                      "display": "Ordered"
+                    }
+                  ]
+                },
+                "doseQuantity": {
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-03b4-f270f6b9b1c5",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "e2671843-9a01-099e-03b4-f270f6b9b1c5",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "completed",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community",
+                "display": "Community"
+              }
+            ],
+            "text": "Community"
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "308136",
+              "display": "amLODIPine 2.5 MG Oral Tablet"
+            }
+          ],
+          "text": "amLODIPine 2.5 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-c17b-a42e1a17d480"
+        },
+        "authoredOn": "2015-06-18T04:51:51+00:00",
+        "requester": {
+          "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+          "display": "Dr. Buck819 Johnson679"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+            "display": "Essential hypertension (disorder)"
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "sequence": 1,
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1.0,
+                "periodUnit": "d"
+              }
+            },
+            "asNeededBoolean": false,
+            "doseAndRate": [
+              {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                      "code": "ordered",
+                      "display": "Ordered"
+                    }
+                  ]
+                },
+                "doseQuantity": {
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-30f7-df4900ed63c4",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "e2671843-9a01-099e-30f7-df4900ed63c4",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-encounter"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "official",
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "e2671843-9a01-099e-30f7-df4900ed63c4"
+          }
+        ],
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "162673000",
+                "display": "General examination of patient (procedure)"
+              }
+            ],
+            "text": "General examination of patient (procedure)"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "participant": [
+          {
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                    "code": "PPRF",
+                    "display": "primary performer"
+                  }
+                ],
+                "text": "primary performer"
+              }
+            ],
+            "period": {
+              "start": "2016-06-23T04:51:51+00:00",
+              "end": "2016-06-23T05:06:51+00:00"
+            },
+            "individual": {
+              "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+              "display": "Dr. Buck819 Johnson679"
+            }
+          }
+        ],
+        "period": {
+          "start": "2016-06-23T04:51:51+00:00",
+          "end": "2016-06-23T05:06:51+00:00"
+        },
+        "location": [
+          {
+            "location": {
+              "reference": "Location?identifier=https://github.com/synthetichealth/synthea|786cbf67-35fa-3af2-a759-4c5454b43168",
+              "display": "ESSEX COUNTY PRIMARY CARE"
+            }
+          }
+        ],
+        "serviceProvider": {
+          "reference": "Organization?identifier=https://github.com/synthetichealth/synthea|5f7663da-4b19-3629-b8f2-fb07d75421d9",
+          "display": "ESSEX COUNTY PRIMARY CARE"
+        }
+      },
+      "request": {
+        "method": "POST",
+        "url": "Encounter"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-8158-c9a982d7194a",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "e2671843-9a01-099e-8158-c9a982d7194a",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "completed",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community",
+                "display": "Community"
+              }
+            ],
+            "text": "Community"
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "310798",
+              "display": "Hydrochlorothiazide 25 MG Oral Tablet"
+            }
+          ],
+          "text": "Hydrochlorothiazide 25 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-30f7-df4900ed63c4"
+        },
+        "authoredOn": "2016-06-23T04:51:51+00:00",
+        "requester": {
+          "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+          "display": "Dr. Buck819 Johnson679"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+            "display": "Essential hypertension (disorder)"
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "sequence": 1,
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1.0,
+                "periodUnit": "d"
+              }
+            },
+            "asNeededBoolean": false,
+            "doseAndRate": [
+              {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                      "code": "ordered",
+                      "display": "Ordered"
+                    }
+                  ]
+                },
+                "doseQuantity": {
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-cafb-2f078cc1281c",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "e2671843-9a01-099e-cafb-2f078cc1281c",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "completed",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community",
+                "display": "Community"
+              }
+            ],
+            "text": "Community"
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "308136",
+              "display": "amLODIPine 2.5 MG Oral Tablet"
+            }
+          ],
+          "text": "amLODIPine 2.5 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-30f7-df4900ed63c4"
+        },
+        "authoredOn": "2016-06-23T04:51:51+00:00",
+        "requester": {
+          "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+          "display": "Dr. Buck819 Johnson679"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+            "display": "Essential hypertension (disorder)"
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "sequence": 1,
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1.0,
+                "periodUnit": "d"
+              }
+            },
+            "asNeededBoolean": false,
+            "doseAndRate": [
+              {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                      "code": "ordered",
+                      "display": "Ordered"
+                    }
+                  ]
+                },
+                "doseQuantity": {
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-ce48-73a7fe3cdff5",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "e2671843-9a01-099e-ce48-73a7fe3cdff5",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-encounter"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "official",
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "e2671843-9a01-099e-ce48-73a7fe3cdff5"
+          }
+        ],
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "162673000",
+                "display": "General examination of patient (procedure)"
+              }
+            ],
+            "text": "General examination of patient (procedure)"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "participant": [
+          {
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                    "code": "PPRF",
+                    "display": "primary performer"
+                  }
+                ],
+                "text": "primary performer"
+              }
+            ],
+            "period": {
+              "start": "2017-06-29T04:51:51+00:00",
+              "end": "2017-06-29T05:06:51+00:00"
+            },
+            "individual": {
+              "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+              "display": "Dr. Buck819 Johnson679"
+            }
+          }
+        ],
+        "period": {
+          "start": "2017-06-29T04:51:51+00:00",
+          "end": "2017-06-29T05:06:51+00:00"
+        },
+        "location": [
+          {
+            "location": {
+              "reference": "Location?identifier=https://github.com/synthetichealth/synthea|786cbf67-35fa-3af2-a759-4c5454b43168",
+              "display": "ESSEX COUNTY PRIMARY CARE"
+            }
+          }
+        ],
+        "serviceProvider": {
+          "reference": "Organization?identifier=https://github.com/synthetichealth/synthea|5f7663da-4b19-3629-b8f2-fb07d75421d9",
+          "display": "ESSEX COUNTY PRIMARY CARE"
+        }
+      },
+      "request": {
+        "method": "POST",
+        "url": "Encounter"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-9e23-a1d49cdae8ca",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "e2671843-9a01-099e-9e23-a1d49cdae8ca",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition-encounter-diagnosis"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "encounter-diagnosis",
+                "display": "Encounter Diagnosis"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "368581000119106",
+              "display": "Neuropathy due to type 2 diabetes mellitus (disorder)"
+            }
+          ],
+          "text": "Neuropathy due to type 2 diabetes mellitus (disorder)"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-ce48-73a7fe3cdff5"
+        },
+        "onsetDateTime": "2017-06-29T04:51:51+00:00",
+        "recordedDate": "2017-06-29T04:51:51+00:00"
+      },
+      "request": {
+        "method": "POST",
+        "url": "Condition"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-e356-fa8181ac9b57",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "e2671843-9a01-099e-e356-fa8181ac9b57",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "completed",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community",
+                "display": "Community"
+              }
+            ],
+            "text": "Community"
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "310798",
+              "display": "Hydrochlorothiazide 25 MG Oral Tablet"
+            }
+          ],
+          "text": "Hydrochlorothiazide 25 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-ce48-73a7fe3cdff5"
+        },
+        "authoredOn": "2017-06-29T04:51:51+00:00",
+        "requester": {
+          "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+          "display": "Dr. Buck819 Johnson679"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+            "display": "Essential hypertension (disorder)"
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "sequence": 1,
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1.0,
+                "periodUnit": "d"
+              }
+            },
+            "asNeededBoolean": false,
+            "doseAndRate": [
+              {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                      "code": "ordered",
+                      "display": "Ordered"
+                    }
+                  ]
+                },
+                "doseQuantity": {
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-5b2d-7c0fef1a4aa7",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "e2671843-9a01-099e-5b2d-7c0fef1a4aa7",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "completed",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community",
+                "display": "Community"
+              }
+            ],
+            "text": "Community"
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "308136",
+              "display": "amLODIPine 2.5 MG Oral Tablet"
+            }
+          ],
+          "text": "amLODIPine 2.5 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-ce48-73a7fe3cdff5"
+        },
+        "authoredOn": "2017-06-29T04:51:51+00:00",
+        "requester": {
+          "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+          "display": "Dr. Buck819 Johnson679"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+            "display": "Essential hypertension (disorder)"
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "sequence": 1,
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1.0,
+                "periodUnit": "d"
+              }
+            },
+            "asNeededBoolean": false,
+            "doseAndRate": [
+              {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                      "code": "ordered",
+                      "display": "Ordered"
+                    }
+                  ]
+                },
+                "doseQuantity": {
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-e0b8-edd50ca31bb1",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "e2671843-9a01-099e-e0b8-edd50ca31bb1",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-encounter"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "official",
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "e2671843-9a01-099e-e0b8-edd50ca31bb1"
+          }
+        ],
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "162673000",
+                "display": "General examination of patient (procedure)"
+              }
+            ],
+            "text": "General examination of patient (procedure)"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "participant": [
+          {
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                    "code": "PPRF",
+                    "display": "primary performer"
+                  }
+                ],
+                "text": "primary performer"
+              }
+            ],
+            "period": {
+              "start": "2018-07-05T04:51:51+00:00",
+              "end": "2018-07-05T05:06:51+00:00"
+            },
+            "individual": {
+              "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+              "display": "Dr. Buck819 Johnson679"
+            }
+          }
+        ],
+        "period": {
+          "start": "2018-07-05T04:51:51+00:00",
+          "end": "2018-07-05T05:06:51+00:00"
+        },
+        "location": [
+          {
+            "location": {
+              "reference": "Location?identifier=https://github.com/synthetichealth/synthea|786cbf67-35fa-3af2-a759-4c5454b43168",
+              "display": "ESSEX COUNTY PRIMARY CARE"
+            }
+          }
+        ],
+        "serviceProvider": {
+          "reference": "Organization?identifier=https://github.com/synthetichealth/synthea|5f7663da-4b19-3629-b8f2-fb07d75421d9",
+          "display": "ESSEX COUNTY PRIMARY CARE"
+        }
+      },
+      "request": {
+        "method": "POST",
+        "url": "Encounter"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-54b6-254d5f479246",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "e2671843-9a01-099e-54b6-254d5f479246",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "completed",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community",
+                "display": "Community"
+              }
+            ],
+            "text": "Community"
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "310798",
+              "display": "Hydrochlorothiazide 25 MG Oral Tablet"
+            }
+          ],
+          "text": "Hydrochlorothiazide 25 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-e0b8-edd50ca31bb1"
+        },
+        "authoredOn": "2018-07-05T04:51:51+00:00",
+        "requester": {
+          "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+          "display": "Dr. Buck819 Johnson679"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+            "display": "Essential hypertension (disorder)"
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "sequence": 1,
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1.0,
+                "periodUnit": "d"
+              }
+            },
+            "asNeededBoolean": false,
+            "doseAndRate": [
+              {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                      "code": "ordered",
+                      "display": "Ordered"
+                    }
+                  ]
+                },
+                "doseQuantity": {
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-1a31-9fa04b4fa558",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "e2671843-9a01-099e-1a31-9fa04b4fa558",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "completed",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community",
+                "display": "Community"
+              }
+            ],
+            "text": "Community"
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "308136",
+              "display": "amLODIPine 2.5 MG Oral Tablet"
+            }
+          ],
+          "text": "amLODIPine 2.5 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-e0b8-edd50ca31bb1"
+        },
+        "authoredOn": "2018-07-05T04:51:51+00:00",
+        "requester": {
+          "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+          "display": "Dr. Buck819 Johnson679"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+            "display": "Essential hypertension (disorder)"
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "sequence": 1,
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1.0,
+                "periodUnit": "d"
+              }
+            },
+            "asNeededBoolean": false,
+            "doseAndRate": [
+              {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                      "code": "ordered",
+                      "display": "Ordered"
+                    }
+                  ]
+                },
+                "doseQuantity": {
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-8118-2a3e3ccf35d2",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "e2671843-9a01-099e-8118-2a3e3ccf35d2",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-encounter"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "official",
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "e2671843-9a01-099e-8118-2a3e3ccf35d2"
+          }
+        ],
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "162673000",
+                "display": "General examination of patient (procedure)"
+              }
+            ],
+            "text": "General examination of patient (procedure)"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "participant": [
+          {
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                    "code": "PPRF",
+                    "display": "primary performer"
+                  }
+                ],
+                "text": "primary performer"
+              }
+            ],
+            "period": {
+              "start": "2019-07-11T04:51:51+00:00",
+              "end": "2019-07-11T05:06:51+00:00"
+            },
+            "individual": {
+              "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+              "display": "Dr. Buck819 Johnson679"
+            }
+          }
+        ],
+        "period": {
+          "start": "2019-07-11T04:51:51+00:00",
+          "end": "2019-07-11T05:06:51+00:00"
+        },
+        "location": [
+          {
+            "location": {
+              "reference": "Location?identifier=https://github.com/synthetichealth/synthea|786cbf67-35fa-3af2-a759-4c5454b43168",
+              "display": "ESSEX COUNTY PRIMARY CARE"
+            }
+          }
+        ],
+        "serviceProvider": {
+          "reference": "Organization?identifier=https://github.com/synthetichealth/synthea|5f7663da-4b19-3629-b8f2-fb07d75421d9",
+          "display": "ESSEX COUNTY PRIMARY CARE"
+        }
+      },
+      "request": {
+        "method": "POST",
+        "url": "Encounter"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-b9d4-cead788a38f7",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "e2671843-9a01-099e-b9d4-cead788a38f7",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "completed",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community",
+                "display": "Community"
+              }
+            ],
+            "text": "Community"
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "310798",
+              "display": "Hydrochlorothiazide 25 MG Oral Tablet"
+            }
+          ],
+          "text": "Hydrochlorothiazide 25 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-8118-2a3e3ccf35d2"
+        },
+        "authoredOn": "2019-07-11T04:51:51+00:00",
+        "requester": {
+          "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+          "display": "Dr. Buck819 Johnson679"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+            "display": "Essential hypertension (disorder)"
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "sequence": 1,
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1.0,
+                "periodUnit": "d"
+              }
+            },
+            "asNeededBoolean": false,
+            "doseAndRate": [
+              {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                      "code": "ordered",
+                      "display": "Ordered"
+                    }
+                  ]
+                },
+                "doseQuantity": {
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-39f8-57af3abd88a2",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "e2671843-9a01-099e-39f8-57af3abd88a2",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "completed",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community",
+                "display": "Community"
+              }
+            ],
+            "text": "Community"
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "308136",
+              "display": "amLODIPine 2.5 MG Oral Tablet"
+            }
+          ],
+          "text": "amLODIPine 2.5 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-8118-2a3e3ccf35d2"
+        },
+        "authoredOn": "2019-07-11T04:51:51+00:00",
+        "requester": {
+          "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+          "display": "Dr. Buck819 Johnson679"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+            "display": "Essential hypertension (disorder)"
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "sequence": 1,
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1.0,
+                "periodUnit": "d"
+              }
+            },
+            "asNeededBoolean": false,
+            "doseAndRate": [
+              {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                      "code": "ordered",
+                      "display": "Ordered"
+                    }
+                  ]
+                },
+                "doseQuantity": {
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-32b4-cac6f2656e59",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "e2671843-9a01-099e-32b4-cac6f2656e59",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-encounter"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "official",
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "e2671843-9a01-099e-32b4-cac6f2656e59"
+          }
+        ],
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "162673000",
+                "display": "General examination of patient (procedure)"
+              }
+            ],
+            "text": "General examination of patient (procedure)"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "participant": [
+          {
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                    "code": "PPRF",
+                    "display": "primary performer"
+                  }
+                ],
+                "text": "primary performer"
+              }
+            ],
+            "period": {
+              "start": "2020-07-16T04:51:51+00:00",
+              "end": "2020-07-16T05:06:51+00:00"
+            },
+            "individual": {
+              "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+              "display": "Dr. Buck819 Johnson679"
+            }
+          }
+        ],
+        "period": {
+          "start": "2020-07-16T04:51:51+00:00",
+          "end": "2020-07-16T05:06:51+00:00"
+        },
+        "location": [
+          {
+            "location": {
+              "reference": "Location?identifier=https://github.com/synthetichealth/synthea|786cbf67-35fa-3af2-a759-4c5454b43168",
+              "display": "ESSEX COUNTY PRIMARY CARE"
+            }
+          }
+        ],
+        "serviceProvider": {
+          "reference": "Organization?identifier=https://github.com/synthetichealth/synthea|5f7663da-4b19-3629-b8f2-fb07d75421d9",
+          "display": "ESSEX COUNTY PRIMARY CARE"
+        }
+      },
+      "request": {
+        "method": "POST",
+        "url": "Encounter"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-41ab-72d901b77bfc",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "e2671843-9a01-099e-41ab-72d901b77bfc",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "completed",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community",
+                "display": "Community"
+              }
+            ],
+            "text": "Community"
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "310798",
+              "display": "Hydrochlorothiazide 25 MG Oral Tablet"
+            }
+          ],
+          "text": "Hydrochlorothiazide 25 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-32b4-cac6f2656e59"
+        },
+        "authoredOn": "2020-07-16T04:51:51+00:00",
+        "requester": {
+          "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+          "display": "Dr. Buck819 Johnson679"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+            "display": "Essential hypertension (disorder)"
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "sequence": 1,
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1.0,
+                "periodUnit": "d"
+              }
+            },
+            "asNeededBoolean": false,
+            "doseAndRate": [
+              {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                      "code": "ordered",
+                      "display": "Ordered"
+                    }
+                  ]
+                },
+                "doseQuantity": {
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-c7fd-0262b72274eb",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "e2671843-9a01-099e-c7fd-0262b72274eb",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "completed",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community",
+                "display": "Community"
+              }
+            ],
+            "text": "Community"
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "308136",
+              "display": "amLODIPine 2.5 MG Oral Tablet"
+            }
+          ],
+          "text": "amLODIPine 2.5 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-32b4-cac6f2656e59"
+        },
+        "authoredOn": "2020-07-16T04:51:51+00:00",
+        "requester": {
+          "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+          "display": "Dr. Buck819 Johnson679"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+            "display": "Essential hypertension (disorder)"
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "sequence": 1,
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1.0,
+                "periodUnit": "d"
+              }
+            },
+            "asNeededBoolean": false,
+            "doseAndRate": [
+              {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                      "code": "ordered",
+                      "display": "Ordered"
+                    }
+                  ]
+                },
+                "doseQuantity": {
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-1f82-2269e734b53a",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "e2671843-9a01-099e-1f82-2269e734b53a",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-encounter"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "official",
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "e2671843-9a01-099e-1f82-2269e734b53a"
+          }
+        ],
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "33879002",
+                "display": "Administration of vaccine to produce active immunity (procedure)"
+              }
+            ],
+            "text": "Administration of vaccine to produce active immunity (procedure)"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "participant": [
+          {
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                    "code": "PPRF",
+                    "display": "primary performer"
+                  }
+                ],
+                "text": "primary performer"
+              }
+            ],
+            "period": {
+              "start": "2020-09-17T04:51:51+00:00",
+              "end": "2020-09-17T05:06:51+00:00"
+            },
+            "individual": {
+              "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999987297",
+              "display": "Dr. Madelaine318 Walker122"
+            }
+          }
+        ],
+        "period": {
+          "start": "2020-09-17T04:51:51+00:00",
+          "end": "2020-09-17T05:06:51+00:00"
+        },
+        "location": [
+          {
+            "location": {
+              "reference": "Location?identifier=https://github.com/synthetichealth/synthea|956c981c-5bbc-3bac-b136-d53e114cc33f",
+              "display": "NORTH SHORE MEDICAL CENTER INC"
+            }
+          }
+        ],
+        "serviceProvider": {
+          "reference": "Organization?identifier=https://github.com/synthetichealth/synthea|af8566eb-8918-3ec7-ba44-92b6a2cf8097",
+          "display": "NORTH SHORE MEDICAL CENTER INC"
+        }
+      },
+      "request": {
+        "method": "POST",
+        "url": "Encounter"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-10aa-968c7ee460c3",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "e2671843-9a01-099e-10aa-968c7ee460c3",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-encounter"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "official",
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "e2671843-9a01-099e-10aa-968c7ee460c3"
+          }
+        ],
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "33879002",
+                "display": "Administration of vaccine to produce active immunity (procedure)"
+              }
+            ],
+            "text": "Administration of vaccine to produce active immunity (procedure)"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "participant": [
+          {
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                    "code": "PPRF",
+                    "display": "primary performer"
+                  }
+                ],
+                "text": "primary performer"
+              }
+            ],
+            "period": {
+              "start": "2020-10-15T04:51:51+00:00",
+              "end": "2020-10-15T05:06:51+00:00"
+            },
+            "individual": {
+              "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999987297",
+              "display": "Dr. Madelaine318 Walker122"
+            }
+          }
+        ],
+        "period": {
+          "start": "2020-10-15T04:51:51+00:00",
+          "end": "2020-10-15T05:06:51+00:00"
+        },
+        "location": [
+          {
+            "location": {
+              "reference": "Location?identifier=https://github.com/synthetichealth/synthea|956c981c-5bbc-3bac-b136-d53e114cc33f",
+              "display": "NORTH SHORE MEDICAL CENTER INC"
+            }
+          }
+        ],
+        "serviceProvider": {
+          "reference": "Organization?identifier=https://github.com/synthetichealth/synthea|af8566eb-8918-3ec7-ba44-92b6a2cf8097",
+          "display": "NORTH SHORE MEDICAL CENTER INC"
+        }
+      },
+      "request": {
+        "method": "POST",
+        "url": "Encounter"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-62a8-29ea5cac36a5",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "e2671843-9a01-099e-62a8-29ea5cac36a5",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-encounter"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "official",
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "e2671843-9a01-099e-62a8-29ea5cac36a5"
+          }
+        ],
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "162673000",
+                "display": "General examination of patient (procedure)"
+              }
+            ],
+            "text": "General examination of patient (procedure)"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "participant": [
+          {
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                    "code": "PPRF",
+                    "display": "primary performer"
+                  }
+                ],
+                "text": "primary performer"
+              }
+            ],
+            "period": {
+              "start": "2021-07-22T04:51:51+00:00",
+              "end": "2021-07-22T05:06:51+00:00"
+            },
+            "individual": {
+              "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+              "display": "Dr. Buck819 Johnson679"
+            }
+          }
+        ],
+        "period": {
+          "start": "2021-07-22T04:51:51+00:00",
+          "end": "2021-07-22T05:06:51+00:00"
+        },
+        "location": [
+          {
+            "location": {
+              "reference": "Location?identifier=https://github.com/synthetichealth/synthea|786cbf67-35fa-3af2-a759-4c5454b43168",
+              "display": "ESSEX COUNTY PRIMARY CARE"
+            }
+          }
+        ],
+        "serviceProvider": {
+          "reference": "Organization?identifier=https://github.com/synthetichealth/synthea|5f7663da-4b19-3629-b8f2-fb07d75421d9",
+          "display": "ESSEX COUNTY PRIMARY CARE"
+        }
+      },
+      "request": {
+        "method": "POST",
+        "url": "Encounter"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-a79d-27395c46b81e",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "e2671843-9a01-099e-a79d-27395c46b81e",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "completed",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community",
+                "display": "Community"
+              }
+            ],
+            "text": "Community"
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "310798",
+              "display": "Hydrochlorothiazide 25 MG Oral Tablet"
+            }
+          ],
+          "text": "Hydrochlorothiazide 25 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-62a8-29ea5cac36a5"
+        },
+        "authoredOn": "2021-07-22T04:51:51+00:00",
+        "requester": {
+          "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+          "display": "Dr. Buck819 Johnson679"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+            "display": "Essential hypertension (disorder)"
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "sequence": 1,
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1.0,
+                "periodUnit": "d"
+              }
+            },
+            "asNeededBoolean": false,
+            "doseAndRate": [
+              {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                      "code": "ordered",
+                      "display": "Ordered"
+                    }
+                  ]
+                },
+                "doseQuantity": {
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-594a-9e904cdf3462",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "e2671843-9a01-099e-594a-9e904cdf3462",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "completed",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community",
+                "display": "Community"
+              }
+            ],
+            "text": "Community"
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "308136",
+              "display": "amLODIPine 2.5 MG Oral Tablet"
+            }
+          ],
+          "text": "amLODIPine 2.5 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-62a8-29ea5cac36a5"
+        },
+        "authoredOn": "2021-07-22T04:51:51+00:00",
+        "requester": {
+          "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+          "display": "Dr. Buck819 Johnson679"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+            "display": "Essential hypertension (disorder)"
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "sequence": 1,
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1.0,
+                "periodUnit": "d"
+              }
+            },
+            "asNeededBoolean": false,
+            "doseAndRate": [
+              {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                      "code": "ordered",
+                      "display": "Ordered"
+                    }
+                  ]
+                },
+                "doseQuantity": {
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-0a30-63e4ccf279e8",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "e2671843-9a01-099e-0a30-63e4ccf279e8",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-encounter"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "official",
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "e2671843-9a01-099e-0a30-63e4ccf279e8"
+          }
+        ],
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "162673000",
+                "display": "General examination of patient (procedure)"
+              }
+            ],
+            "text": "General examination of patient (procedure)"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "participant": [
+          {
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                    "code": "PPRF",
+                    "display": "primary performer"
+                  }
+                ],
+                "text": "primary performer"
+              }
+            ],
+            "period": {
+              "start": "2022-07-28T04:51:51+00:00",
+              "end": "2022-07-28T05:06:51+00:00"
+            },
+            "individual": {
+              "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+              "display": "Dr. Buck819 Johnson679"
+            }
+          }
+        ],
+        "period": {
+          "start": "2022-07-28T04:51:51+00:00",
+          "end": "2022-07-28T05:06:51+00:00"
+        },
+        "location": [
+          {
+            "location": {
+              "reference": "Location?identifier=https://github.com/synthetichealth/synthea|786cbf67-35fa-3af2-a759-4c5454b43168",
+              "display": "ESSEX COUNTY PRIMARY CARE"
+            }
+          }
+        ],
+        "serviceProvider": {
+          "reference": "Organization?identifier=https://github.com/synthetichealth/synthea|5f7663da-4b19-3629-b8f2-fb07d75421d9",
+          "display": "ESSEX COUNTY PRIMARY CARE"
+        }
+      },
+      "request": {
+        "method": "POST",
+        "url": "Encounter"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-5996-fd672d29ea92",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "e2671843-9a01-099e-5996-fd672d29ea92",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "completed",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community",
+                "display": "Community"
+              }
+            ],
+            "text": "Community"
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "310798",
+              "display": "Hydrochlorothiazide 25 MG Oral Tablet"
+            }
+          ],
+          "text": "Hydrochlorothiazide 25 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-0a30-63e4ccf279e8"
+        },
+        "authoredOn": "2022-07-28T04:51:51+00:00",
+        "requester": {
+          "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+          "display": "Dr. Buck819 Johnson679"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+            "display": "Essential hypertension (disorder)"
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "sequence": 1,
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1.0,
+                "periodUnit": "d"
+              }
+            },
+            "asNeededBoolean": false,
+            "doseAndRate": [
+              {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                      "code": "ordered",
+                      "display": "Ordered"
+                    }
+                  ]
+                },
+                "doseQuantity": {
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-d0de-4528b465105e",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "e2671843-9a01-099e-d0de-4528b465105e",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "completed",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community",
+                "display": "Community"
+              }
+            ],
+            "text": "Community"
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "308136",
+              "display": "amLODIPine 2.5 MG Oral Tablet"
+            }
+          ],
+          "text": "amLODIPine 2.5 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-0a30-63e4ccf279e8"
+        },
+        "authoredOn": "2022-07-28T04:51:51+00:00",
+        "requester": {
+          "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+          "display": "Dr. Buck819 Johnson679"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+            "display": "Essential hypertension (disorder)"
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "sequence": 1,
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1.0,
+                "periodUnit": "d"
+              }
+            },
+            "asNeededBoolean": false,
+            "doseAndRate": [
+              {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                      "code": "ordered",
+                      "display": "Ordered"
+                    }
+                  ]
+                },
+                "doseQuantity": {
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-7ca5-2ca6829d7b20",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "e2671843-9a01-099e-7ca5-2ca6829d7b20",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-encounter"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "official",
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "e2671843-9a01-099e-7ca5-2ca6829d7b20"
+          }
+        ],
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "162673000",
+                "display": "General examination of patient (procedure)"
+              }
+            ],
+            "text": "General examination of patient (procedure)"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "participant": [
+          {
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                    "code": "PPRF",
+                    "display": "primary performer"
+                  }
+                ],
+                "text": "primary performer"
+              }
+            ],
+            "period": {
+              "start": "2023-08-03T04:51:51+00:00",
+              "end": "2023-08-03T05:06:51+00:00"
+            },
+            "individual": {
+              "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+              "display": "Dr. Buck819 Johnson679"
+            }
+          }
+        ],
+        "period": {
+          "start": "2023-08-03T04:51:51+00:00",
+          "end": "2023-08-03T05:06:51+00:00"
+        },
+        "location": [
+          {
+            "location": {
+              "reference": "Location?identifier=https://github.com/synthetichealth/synthea|786cbf67-35fa-3af2-a759-4c5454b43168",
+              "display": "ESSEX COUNTY PRIMARY CARE"
+            }
+          }
+        ],
+        "serviceProvider": {
+          "reference": "Organization?identifier=https://github.com/synthetichealth/synthea|5f7663da-4b19-3629-b8f2-fb07d75421d9",
+          "display": "ESSEX COUNTY PRIMARY CARE"
+        }
+      },
+      "request": {
+        "method": "POST",
+        "url": "Encounter"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-f4af-122260d736d8",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "e2671843-9a01-099e-f4af-122260d736d8",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "completed",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community",
+                "display": "Community"
+              }
+            ],
+            "text": "Community"
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "310798",
+              "display": "Hydrochlorothiazide 25 MG Oral Tablet"
+            }
+          ],
+          "text": "Hydrochlorothiazide 25 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-7ca5-2ca6829d7b20"
+        },
+        "authoredOn": "2023-08-03T04:51:51+00:00",
+        "requester": {
+          "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+          "display": "Dr. Buck819 Johnson679"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+            "display": "Essential hypertension (disorder)"
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "sequence": 1,
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1.0,
+                "periodUnit": "d"
+              }
+            },
+            "asNeededBoolean": false,
+            "doseAndRate": [
+              {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                      "code": "ordered",
+                      "display": "Ordered"
+                    }
+                  ]
+                },
+                "doseQuantity": {
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-e619-b6d539801e27",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "e2671843-9a01-099e-e619-b6d539801e27",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "completed",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community",
+                "display": "Community"
+              }
+            ],
+            "text": "Community"
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "308136",
+              "display": "amLODIPine 2.5 MG Oral Tablet"
+            }
+          ],
+          "text": "amLODIPine 2.5 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-7ca5-2ca6829d7b20"
+        },
+        "authoredOn": "2023-08-03T04:51:51+00:00",
+        "requester": {
+          "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+          "display": "Dr. Buck819 Johnson679"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+            "display": "Essential hypertension (disorder)"
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "sequence": 1,
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1.0,
+                "periodUnit": "d"
+              }
+            },
+            "asNeededBoolean": false,
+            "doseAndRate": [
+              {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                      "code": "ordered",
+                      "display": "Ordered"
+                    }
+                  ]
+                },
+                "doseQuantity": {
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-908d-433338b12175",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "e2671843-9a01-099e-908d-433338b12175",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-encounter"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "official",
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "e2671843-9a01-099e-908d-433338b12175"
+          }
+        ],
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "162673000",
+                "display": "General examination of patient (procedure)"
+              }
+            ],
+            "text": "General examination of patient (procedure)"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "participant": [
+          {
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                    "code": "PPRF",
+                    "display": "primary performer"
+                  }
+                ],
+                "text": "primary performer"
+              }
+            ],
+            "period": {
+              "start": "2024-08-08T04:51:51+00:00",
+              "end": "2024-08-08T05:06:51+00:00"
+            },
+            "individual": {
+              "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+              "display": "Dr. Buck819 Johnson679"
+            }
+          }
+        ],
+        "period": {
+          "start": "2024-08-08T04:51:51+00:00",
+          "end": "2024-08-08T05:06:51+00:00"
+        },
+        "location": [
+          {
+            "location": {
+              "reference": "Location?identifier=https://github.com/synthetichealth/synthea|786cbf67-35fa-3af2-a759-4c5454b43168",
+              "display": "ESSEX COUNTY PRIMARY CARE"
+            }
+          }
+        ],
+        "serviceProvider": {
+          "reference": "Organization?identifier=https://github.com/synthetichealth/synthea|5f7663da-4b19-3629-b8f2-fb07d75421d9",
+          "display": "ESSEX COUNTY PRIMARY CARE"
+        }
+      },
+      "request": {
+        "method": "POST",
+        "url": "Encounter"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-0caf-efb123e9efca",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "e2671843-9a01-099e-0caf-efb123e9efca",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "completed",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community",
+                "display": "Community"
+              }
+            ],
+            "text": "Community"
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "310798",
+              "display": "Hydrochlorothiazide 25 MG Oral Tablet"
+            }
+          ],
+          "text": "Hydrochlorothiazide 25 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-908d-433338b12175"
+        },
+        "authoredOn": "2024-08-08T04:51:51+00:00",
+        "requester": {
+          "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+          "display": "Dr. Buck819 Johnson679"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+            "display": "Essential hypertension (disorder)"
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "sequence": 1,
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1.0,
+                "periodUnit": "d"
+              }
+            },
+            "asNeededBoolean": false,
+            "doseAndRate": [
+              {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                      "code": "ordered",
+                      "display": "Ordered"
+                    }
+                  ]
+                },
+                "doseQuantity": {
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-3748-3557ab9431cf",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "e2671843-9a01-099e-3748-3557ab9431cf",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "completed",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community",
+                "display": "Community"
+              }
+            ],
+            "text": "Community"
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "308136",
+              "display": "amLODIPine 2.5 MG Oral Tablet"
+            }
+          ],
+          "text": "amLODIPine 2.5 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-908d-433338b12175"
+        },
+        "authoredOn": "2024-08-08T04:51:51+00:00",
+        "requester": {
+          "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+          "display": "Dr. Buck819 Johnson679"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+            "display": "Essential hypertension (disorder)"
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "sequence": 1,
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1.0,
+                "periodUnit": "d"
+              }
+            },
+            "asNeededBoolean": false,
+            "doseAndRate": [
+              {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                      "code": "ordered",
+                      "display": "Ordered"
+                    }
+                  ]
+                },
+                "doseQuantity": {
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-fe12-6d894a9eaca2",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "e2671843-9a01-099e-fe12-6d894a9eaca2",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-encounter"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "official",
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "e2671843-9a01-099e-fe12-6d894a9eaca2"
+          }
+        ],
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "162673000",
+                "display": "General examination of patient (procedure)"
+              }
+            ],
+            "text": "General examination of patient (procedure)"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "participant": [
+          {
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                    "code": "PPRF",
+                    "display": "primary performer"
+                  }
+                ],
+                "text": "primary performer"
+              }
+            ],
+            "period": {
+              "start": "2025-08-14T04:51:51+00:00",
+              "end": "2025-08-14T05:06:51+00:00"
+            },
+            "individual": {
+              "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+              "display": "Dr. Buck819 Johnson679"
+            }
+          }
+        ],
+        "period": {
+          "start": "2025-08-14T04:51:51+00:00",
+          "end": "2025-08-14T05:06:51+00:00"
+        },
+        "location": [
+          {
+            "location": {
+              "reference": "Location?identifier=https://github.com/synthetichealth/synthea|786cbf67-35fa-3af2-a759-4c5454b43168",
+              "display": "ESSEX COUNTY PRIMARY CARE"
+            }
+          }
+        ],
+        "serviceProvider": {
+          "reference": "Organization?identifier=https://github.com/synthetichealth/synthea|5f7663da-4b19-3629-b8f2-fb07d75421d9",
+          "display": "ESSEX COUNTY PRIMARY CARE"
+        }
+      },
+      "request": {
+        "method": "POST",
+        "url": "Encounter"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-e0fd-20bd79e249bc",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "e2671843-9a01-099e-e0fd-20bd79e249bc",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "active",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community",
+                "display": "Community"
+              }
+            ],
+            "text": "Community"
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "310798",
+              "display": "Hydrochlorothiazide 25 MG Oral Tablet"
+            }
+          ],
+          "text": "Hydrochlorothiazide 25 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-fe12-6d894a9eaca2"
+        },
+        "authoredOn": "2025-08-14T04:51:51+00:00",
+        "requester": {
+          "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+          "display": "Dr. Buck819 Johnson679"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+            "display": "Essential hypertension (disorder)"
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "sequence": 1,
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1.0,
+                "periodUnit": "d"
+              }
+            },
+            "asNeededBoolean": false,
+            "doseAndRate": [
+              {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                      "code": "ordered",
+                      "display": "Ordered"
+                    }
+                  ]
+                },
+                "doseQuantity": {
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e2671843-9a01-099e-0d8a-56d9dc6cb845",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "e2671843-9a01-099e-0d8a-56d9dc6cb845",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ],
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "active",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community",
+                "display": "Community"
+              }
+            ],
+            "text": "Community"
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "308136",
+              "display": "amLODIPine 2.5 MG Oral Tablet"
+            }
+          ],
+          "text": "amLODIPine 2.5 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "encounter": {
+          "reference": "urn:uuid:e2671843-9a01-099e-fe12-6d894a9eaca2"
+        },
+        "authoredOn": "2025-08-14T04:51:51+00:00",
+        "requester": {
+          "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999941492",
+          "display": "Dr. Buck819 Johnson679"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:e2671843-9a01-099e-af14-34d4ded1a2ef",
+            "display": "Essential hypertension (disorder)"
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "sequence": 1,
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1.0,
+                "periodUnit": "d"
+              }
+            },
+            "asNeededBoolean": false,
+            "doseAndRate": [
+              {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                      "code": "ordered",
+                      "display": "Ordered"
+                    }
+                  ]
+                },
+                "doseQuantity": {
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest"
+      }
+    },
+    {
+      "fullUrl": "https://careloop.demo/fhir/Patient/john-miller",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "john-miller",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "system": "https://careloop.demo/mrn",
+            "value": "CL-DEMO-0001"
+          }
+        ],
+        "name": [
+          {
+            "use": "official",
+            "family": "Miller",
+            "given": [
+              "John"
+            ]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1968-03-30"
+      }
+    },
+    {
+      "fullUrl": "https://careloop.demo/fhir/Condition/cond-hypertension",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-hypertension",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active",
+              "display": "Active"
+            }
+          ],
+          "text": "Active"
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed",
+              "display": "Confirmed"
+            }
+          ],
+          "text": "Confirmed"
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "59621000",
+              "display": "Essential hypertension"
+            }
+          ],
+          "text": "Essential hypertension"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "onsetDateTime": "2023-08-15T05:56:37Z",
+        "recordedDate": "2023-08-15T05:56:37Z"
+      }
+    },
+    {
+      "fullUrl": "https://careloop.demo/fhir/Condition/cond-t2d",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-t2d",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active",
+              "display": "Active"
+            }
+          ],
+          "text": "Active"
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed",
+              "display": "Confirmed"
+            }
+          ],
+          "text": "Confirmed"
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "44054006",
+              "display": "Type 2 diabetes mellitus"
+            }
+          ],
+          "text": "Type 2 diabetes mellitus"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "onsetDateTime": "2022-08-15T05:56:37Z",
+        "recordedDate": "2022-08-15T05:56:37Z",
+        "note": [
+          {
+            "text": "Stable this visit \u2014 deliberately deferred in the demo narrative (spec 6.2)."
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "https://careloop.demo/fhir/Condition/cond-ckd-risk",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-ckd-risk",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active",
+              "display": "Active"
+            }
+          ],
+          "text": "Active"
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed",
+              "display": "Confirmed"
+            }
+          ],
+          "text": "Confirmed"
+        },
+        "code": {
+          "text": "CKD risk (declining eGFR \u2014 synthetic demo condition)"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "onsetDateTime": "2026-04-16T05:56:37Z",
+        "recordedDate": "2026-04-16T05:56:37Z",
+        "note": [
+          {
+            "text": "Supported by eGFR 58 at today-120d; renal labs are stale (care gap)."
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "https://careloop.demo/fhir/MedicationRequest/med-lisinopril",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "med-lisinopril",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "active",
+        "intent": "order",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "314076",
+              "display": "lisinopril 10 MG Oral Tablet"
+            }
+          ],
+          "text": "lisinopril 10 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "authoredOn": "2026-01-26T05:56:37Z",
+        "dosageInstruction": [
+          {
+            "text": "10 mg orally once daily"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "https://careloop.demo/fhir/MedicationRequest/med-metformin",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "med-metformin",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "active",
+        "intent": "order",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "861007",
+              "display": "metformin hydrochloride 1000 MG Oral Tablet"
+            }
+          ],
+          "text": "metformin hydrochloride 1000 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "authoredOn": "2025-07-10T05:56:37Z",
+        "dosageInstruction": [
+          {
+            "text": "1000 mg orally twice daily"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "https://careloop.demo/fhir/Observation/obs-egfr",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-egfr",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ],
+            "text": "Laboratory"
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "33914-3",
+              "display": "Glomerular filtration rate/1.73 sq M.predicted"
+            }
+          ],
+          "text": "Glomerular filtration rate/1.73 sq M.predicted"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "effectiveDateTime": "2026-04-16T05:56:37Z",
+        "issued": "2026-04-16T05:56:37Z",
+        "valueQuantity": {
+          "value": 58,
+          "unit": "mL/min/1.73m2",
+          "system": "http://unitsofmeasure.org",
+          "code": "mL/min/{1.73_m2}"
+        }
+      }
+    },
+    {
+      "fullUrl": "https://careloop.demo/fhir/Observation/obs-creatinine",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-creatinine",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ],
+            "text": "Laboratory"
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "2160-0",
+              "display": "Creatinine [Mass/volume] in Serum or Plasma"
+            }
+          ],
+          "text": "Creatinine [Mass/volume] in Serum or Plasma"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "effectiveDateTime": "2026-04-16T05:56:37Z",
+        "issued": "2026-04-16T05:56:37Z",
+        "valueQuantity": {
+          "value": 1.38,
+          "unit": "mg/dL",
+          "system": "http://unitsofmeasure.org",
+          "code": "mg/dL"
+        }
+      }
+    },
+    {
+      "fullUrl": "https://careloop.demo/fhir/Observation/obs-a1c",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-a1c",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ],
+            "text": "Laboratory"
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "4548-4",
+              "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
+            }
+          ],
+          "text": "Hemoglobin A1c/Hemoglobin.total in Blood"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "effectiveDateTime": "2026-05-06T05:56:37Z",
+        "issued": "2026-05-06T05:56:37Z",
+        "valueQuantity": {
+          "value": 7.8,
+          "unit": "%",
+          "system": "http://unitsofmeasure.org",
+          "code": "%"
+        }
+      }
+    },
+    {
+      "fullUrl": "https://careloop.demo/fhir/Observation/obs-potassium",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-potassium",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ],
+            "text": "Laboratory"
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "2823-3",
+              "display": "Potassium [Moles/volume] in Serum or Plasma"
+            }
+          ],
+          "text": "Potassium [Moles/volume] in Serum or Plasma"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "effectiveDateTime": "2026-05-14T05:56:37Z",
+        "issued": "2026-05-14T05:56:37Z",
+        "valueQuantity": {
+          "value": 4.2,
+          "unit": "mmol/L",
+          "system": "http://unitsofmeasure.org",
+          "code": "mmol/L"
+        }
+      }
+    },
+    {
+      "fullUrl": "https://careloop.demo/fhir/Observation/obs-bp-70d",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-bp-70d",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "vital-signs",
+                "display": "Vital Signs"
+              }
+            ],
+            "text": "Vital Signs"
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "85354-9",
+              "display": "Blood pressure panel with all children optional"
+            }
+          ],
+          "text": "Blood pressure panel with all children optional"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "effectiveDateTime": "2026-06-05T05:56:37Z",
+        "issued": "2026-06-05T05:56:37Z",
+        "component": [
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "8480-6",
+                  "display": "Systolic blood pressure"
+                }
+              ],
+              "text": "Systolic blood pressure"
+            },
+            "valueQuantity": {
+              "value": 148,
+              "unit": "mm[Hg]",
+              "system": "http://unitsofmeasure.org",
+              "code": "mm[Hg]"
+            }
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "8462-4",
+                  "display": "Diastolic blood pressure"
+                }
+              ],
+              "text": "Diastolic blood pressure"
+            },
+            "valueQuantity": {
+              "value": 92,
+              "unit": "mm[Hg]",
+              "system": "http://unitsofmeasure.org",
+              "code": "mm[Hg]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "https://careloop.demo/fhir/Observation/obs-bp-45d",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-bp-45d",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "vital-signs",
+                "display": "Vital Signs"
+              }
+            ],
+            "text": "Vital Signs"
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "85354-9",
+              "display": "Blood pressure panel with all children optional"
+            }
+          ],
+          "text": "Blood pressure panel with all children optional"
+        },
+        "subject": {
+          "reference": "Patient/john-miller",
+          "display": "John Miller (synthetic)"
+        },
+        "effectiveDateTime": "2026-06-30T05:56:37Z",
+        "issued": "2026-06-30T05:56:37Z",
+        "component": [
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "8480-6",
+                  "display": "Systolic blood pressure"
+                }
+              ],
+              "text": "Systolic blood pressure"
+            },
+            "valueQuantity": {
+              "value": 151,
+              "unit": "mm[Hg]",
+              "system": "http://unitsofmeasure.org",
+              "code": "mm[Hg]"
+            }
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "8462-4",
+                  "display": "Diastolic blood pressure"
+                }
+              ],
+              "text": "Diastolic blood pressure"
+            },
+            "valueQuantity": {
+              "value": 94,
+              "unit": "mm[Hg]",
+              "system": "http://unitsofmeasure.org",
+              "code": "mm[Hg]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "https://careloop.demo/fhir/Appointment/appt-missed-followup",
+      "resource": {
+        "resourceType": "Appointment",
+        "id": "appt-missed-followup",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "noshow",
+        "description": "Hypertension follow-up \u2014 patient did not attend (missed follow-up)",
+        "start": "2026-07-15T05:56:37Z",
+        "end": "2026-07-15T06:26:37Z",
+        "participant": [
+          {
+            "actor": {
+              "reference": "Patient/john-miller",
+              "display": "John Miller (synthetic)"
+            },
+            "status": "accepted"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "https://careloop.demo/fhir/Appointment/appt-today",
+      "resource": {
+        "resourceType": "Appointment",
+        "id": "appt-today",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://careloop.demo/tags/source_class",
+              "code": "synthea_ehr",
+              "display": "synthea_ehr"
+            },
+            {
+              "system": "https://careloop.demo/tags/data_provenance",
+              "code": "synthetic",
+              "display": "Synthetic demo data \u2014 Synthea-style FHIR R4, not real PHI"
+            }
+          ]
+        },
+        "status": "booked",
+        "description": "Follow-up visit \u2014 hypertension, medication review",
+        "start": "2026-08-14T09:30:00Z",
+        "end": "2026-08-14T10:00:00Z",
+        "participant": [
+          {
+            "actor": {
+              "reference": "Patient/john-miller",
+              "display": "John Miller (synthetic)"
+            },
+            "status": "accepted"
+          }
+        ]
+      }
+    }
+  ]
+}

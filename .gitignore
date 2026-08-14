@@ -19,9 +19,10 @@ out/
 npm-debug.log*
 
 # Data pipeline artifacts (the SELECTED bundle + overlay + frozen fixture ARE committed;
-# raw generated cohorts are not)
+# raw generated cohorts and the Synthea jar are not)
 data/synthea/output/
 data/synthea/cohort_raw/
+data/synthea/*.jar
 
 # OS / editor
 .DS_Store

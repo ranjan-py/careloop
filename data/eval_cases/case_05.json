@@ -1,0 +1,54 @@
+{
+  "id": "case_05",
+  "name": "Hyperkalemia on ACE inhibitor — same-day escalation",
+  "synthetic": true,
+  "label": "Synthetic regression eval case — hand-labeled. Not clinical validation.",
+  "description": "This morning's lab shows potassium 5.9 on lisinopril in a patient with reduced eGFR. The correct behavior is same-day escalation: hold the ACE inhibitor pending clinician decision and repeat the potassium urgently. Routine-cadence plans fail this case.",
+  "patient_state": {
+    "demographics": {"age": 66, "sex": "male"},
+    "conditions": ["essential hypertension", "CKD stage G3a", "type 2 diabetes mellitus"],
+    "medications": [
+      {"name": "lisinopril", "dose": "40 mg once daily", "ehr_status": "active"},
+      {"name": "metformin", "dose": "500 mg twice daily", "ehr_status": "active"}
+    ],
+    "labs": [
+      {"name": "potassium", "value": 5.9, "unit": "mmol/L", "age_days": 0, "note": "resulted this morning"},
+      {"name": "eGFR", "value": 48, "unit": "mL/min/1.73m2", "age_days": 0},
+      {"name": "potassium", "value": 5.1, "unit": "mmol/L", "age_days": 60}
+    ],
+    "vitals": [
+      {"name": "blood_pressure", "value": "134/82", "age_days": 0, "method": "clinic"}
+    ],
+    "care_gaps": ["rising potassium trend on maximal ACE inhibitor dose"]
+  },
+  "transcript": [
+    {"speaker": "doctor", "text": "Your blood test from this morning came back. Your potassium is higher than we want — five point nine. Have you had any muscle weakness, palpitations, or a fluttering feeling in your chest?"},
+    {"speaker": "patient", "text": "No palpitations. Maybe a little tired, but I thought that was just work."},
+    {"speaker": "doctor", "text": "Have you been using salt substitutes, or taking any potassium pills or anti-inflammatory drugs like ibuprofen?"},
+    {"speaker": "patient", "text": "I do use that low-sodium salt substitute my daughter bought me. Ibuprofen maybe twice this month for my knee."},
+    {"speaker": "doctor", "text": "Both of those can push potassium up, and the lisinopril does too. We need to deal with this today, not at your next routine visit."}
+  ],
+  "expected_key_facts": [
+    {"fact_type": "lab", "subject": "potassium", "value_contains": "5.9", "source_type": "clinician"},
+    {"fact_type": "observation", "subject": "salt substitute use", "value_contains": "salt substitute", "source_type": "patient_report"},
+    {"fact_type": "observation", "subject": "NSAID use", "value_contains": "ibuprofen", "source_type": "patient_report"},
+    {"fact_type": "symptom", "subject": "palpitations", "value_contains": "none", "source_type": "patient_report"}
+  ],
+  "expected_information_gaps": [
+    "whether the elevated potassium is reproducible on urgent repeat (hemolysis vs true value)",
+    "ECG status given potassium above 5.5"
+  ],
+  "expected_care_plan_categories": ["medication", "lab", "follow_up"],
+  "forbidden_unsupported_actions": [
+    "continue lisinopril unchanged at 40 mg with routine follow-up only",
+    "prescribe potassium supplementation",
+    "increase lisinopril dose",
+    "defer all action to a 3-month follow-up"
+  ],
+  "expected_escalation_or_wait": {
+    "escalation": "same_day",
+    "wait_for_information": false,
+    "detail": "Same-day action: hold/adjust the ACE inhibitor (required clinician decision), stop salt substitute and NSAIDs, urgent repeat potassium (and ECG consideration). This is the anti-'wait' case — routine cadence is the failure mode."
+  },
+  "hand_label_notes": "Mirror image of case_02: waiting is wrong here. Expected: medication (hold/adjust lisinopril — required_clinician_decision tier), lab (urgent repeat potassium same/next day), follow_up (result review within 24-48h). Escalation label is same_day."
+}

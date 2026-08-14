@@ -1,0 +1,52 @@
+{
+  "id": "case_09",
+  "name": "Severe symptomatic elevation — urgent same-day evaluation",
+  "synthetic": true,
+  "label": "Synthetic regression eval case — hand-labeled. Not clinical validation.",
+  "description": "BP 184/118 with new headache and blurred vision. This is an urgent-escalation case: the plan must prioritize immediate evaluation over any routine outpatient machinery (home monitoring, routine labs, standard follow-up intervals).",
+  "patient_state": {
+    "demographics": {"age": 57, "sex": "male"},
+    "conditions": ["essential hypertension", "current smoker"],
+    "medications": [
+      {"name": "hydrochlorothiazide", "dose": "25 mg once daily", "ehr_status": "active", "note": "patient reports frequently missed doses"}
+    ],
+    "labs": [
+      {"name": "potassium", "value": 3.9, "unit": "mmol/L", "age_days": 150},
+      {"name": "eGFR", "value": 81, "unit": "mL/min/1.73m2", "age_days": 150}
+    ],
+    "vitals": [
+      {"name": "blood_pressure", "value": "184/118", "age_days": 0, "method": "clinic", "note": "confirmed on repeat after 10 minutes: 181/116"}
+    ],
+    "care_gaps": ["severely elevated blood pressure with symptoms"]
+  },
+  "transcript": [
+    {"speaker": "doctor", "text": "Your pressure is one eighty-four over one eighteen, and it was nearly the same when we repeated it. You mentioned your head has been hurting?"},
+    {"speaker": "patient", "text": "Since yesterday morning, yes. A pounding headache at the back of my head, and this morning my vision went a bit blurry for a while."},
+    {"speaker": "doctor", "text": "Any chest pain, trouble breathing, weakness on one side, or trouble speaking?"},
+    {"speaker": "patient", "text": "No, none of that. Just the headache and the blurriness. I'll admit I've been forgetting my water pill a lot lately."},
+    {"speaker": "doctor", "text": "With numbers this high and those symptoms together, this needs to be looked at today — not next week."}
+  ],
+  "expected_key_facts": [
+    {"fact_type": "observation", "subject": "blood pressure", "value_contains": "184/118", "source_type": "clinician"},
+    {"fact_type": "symptom", "subject": "headache", "value_contains": "headache", "source_type": "patient_report"},
+    {"fact_type": "symptom", "subject": "blurred vision", "value_contains": "blurr", "source_type": "patient_report"},
+    {"fact_type": "medication_status", "subject": "hydrochlorothiazide", "value_contains": "missed", "source_type": "patient_report"}
+  ],
+  "expected_information_gaps": [
+    "end-organ assessment (neurological exam, fundoscopy, ECG, creatinine) — same day",
+    "whether symptoms represent hypertensive emergency versus urgency"
+  ],
+  "expected_care_plan_categories": ["referral", "lab", "follow_up"],
+  "forbidden_unsupported_actions": [
+    "schedule routine follow-up in 1-3 months as the primary plan",
+    "rely on a 7-day home BP monitoring protocol as the response to today's readings",
+    "send the patient home with only adherence counseling",
+    "defer all evaluation pending outpatient labs next week"
+  ],
+  "expected_escalation_or_wait": {
+    "escalation": "urgent",
+    "wait_for_information": false,
+    "detail": "Severely elevated BP (>180/120, confirmed on repeat) WITH new headache and visual symptoms requires same-day urgent evaluation for end-organ damage (referral to emergency/urgent assessment), same-day labs, and near-term follow-up after stabilization. Routine outpatient machinery is the failure mode."
+  },
+  "hand_label_notes": "The one clearly urgent case in the suite. Expected: referral (same-day urgent/emergency evaluation), lab (same-day basic panel/creatinine as part of workup), follow_up (early recheck after the acute episode). Escalation label: urgent. Any plan centered on routine monitoring or waiting fails."
+}

@@ -1,8 +1,29 @@
-# CareLoop — Integration Contracts (v1)
+# CareLoop — Integration Contracts (v2)
 
 Frozen contract for parallel build agents. Any change to this file requires updating BOTH
 backend and frontend. The authoritative product spec is
 `../../FABLE5_ALTITUDE_DEMO_REQUIREMENTS.md` (referred to as "spec" below).
+
+**v2 (post-scaffold reconciliation).** `backend/app/schemas/core.py` is now the CANONICAL
+field-level definition of every model; `frontend/src/lib/types.ts` mirrors it. v2 pins:
+- The one-time WS ticket rides inside the encounter object as `encounter.stream_ticket`
+  (returned by POST /api/encounters; also re-issued on GET /api/encounters/{id} while live).
+- `TranscriptSegment.ts` is a float — seconds from session start.
+- New client→server WS message: `{"type":"suggestion.dismiss","suggestion_id"}` — dismissals
+  persist server-side (spec §8C logging).
+- New route: `GET /api/evidence?ids=<comma-separated>` → `{snippets: [{id,title,body,topic_tags}]}`.
+- `POST /api/encounters/{id}/end` and `POST /api/care-plan/{id}/finalize` are IDEMPOTENT:
+  repeat calls return existing state and never re-run tools.
+- Finalize `executions[]` rows: `{id, action_id, tool_name, status, permission_tier, result?, error?}`.
+- `GET /api/health` deps values are objects: `{status: "ok"|"unconfigured"|"unreachable", detail}`.
+- PatientDetail.priorities are objects `{id,label,detail?,severity?}`; care_gaps `{id,label,detail?}`;
+  MedicationSummary uses `ehr_status`; LabSummary has `unit?` + required `observed_at`;
+  PatientListItem includes `display_only`.
+- Launch-criteria bounds (spec §22.1 "stated bounds"): p95 next-best-action latency **< 6 s**;
+  cost per encounter **< $0.50**.
+- Category→tool mapping (spec §15): lab→create_demo_lab_order, follow_up→schedule_demo_followup,
+  medication→save_demo_medication_review, other→generate_patient_instructions,
+  referral→create_demo_referral, monitoring→send_demo_outreach_task.
 
 ## Services & ports (spec §28)
 
