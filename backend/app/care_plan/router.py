@@ -267,6 +267,20 @@ async def finalize_care_plan(
         care_plan.finalized_at = datetime.now(timezone.utc)
         await session.commit()
 
+        # Re-run online evaluators now that decisions/executions/reports exist
+        # — the End-Visit run's leakage/fidelity/tool checks were vacuous
+        # (spec §22.1 gates are about the FINAL artifacts). Non-fatal.
+        try:
+            from app.evals.evaluators import run_online_evals
+
+            await run_online_evals(care_plan.encounter_id)
+        except Exception as exc:  # noqa: BLE001
+            import logging
+
+            logging.getLogger(__name__).warning(
+                "Post-finalize online evals failed for %s: %s", care_plan.encounter_id, exc
+            )
+
     action_payloads = []
     for action in actions:
         decision = await _latest_decision(session, action.id)

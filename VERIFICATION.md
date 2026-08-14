@@ -97,6 +97,34 @@ PASS with 8 on-topic suggestions, conflict + disputed beats firing every run.
 
 (append-only)
 
+**2026-08-14 — Mandatory E2E (spec §34 steps 0–32) — demo encounter enc_f3109887784a**
+
+| Steps | Evidence | Status |
+|---|---|---|
+| 0 reset + golden state | `make reset-runtime` inside verify_full_loop; seed intact post-restart | PASS |
+| 1–3 login, open John Miller, priorities/timeline | browser walkthrough (screenshots reviewed); runtime-relative ages correct | PASS |
+| 4–7 start encounter, replay stream, live transcript, speaker path | verify_replay + verify_full_loop + browser (interim vs final styling, doctor/patient labels, manual toggle present) | PASS |
+| 5 (live-mic variant) | code path identical to replay leg; needs a human voice | **PENDING USER** (encore path) |
+| 8–10 real extraction, medication conflict, live next-best question | verify_full_loop PASS ×5 post-fixes (kiosk BP, CONFLICTS_WITH + disputed, 8 on-topic suggestions) | PASS |
+| 11–12 end encounter, real care plan | verify_hitl (5 actions, categories covered, evidence refs resolve) + browser care-plan page | PASS |
+| 13–18 approve/modify/reject + category + remark + finalize | verify_hitl (approve lab, modify follow-up "ten days", reject monitoring w/ patient_limitation + kiosk remark) | PASS |
+| 19–20 approved tools run, rejected does not | verify_hitl (4 executed, rejected ran nothing) | PASS |
+| 21–23 summaries exclude rejected, carry modified FINAL wording | verify_hitl + deterministic leakage/fidelity evaluators GREEN post-finalize | PASS |
+| 24 Neo4j facts/links | graph API + AI Ops Context Graph tab (live read: 53 nodes/93 rels) incl. CONFLICTS_WITH | PASS |
+| 25 denial visibility | permission gate + DENIED rows implemented and unit-tested; scripted denial staged for rehearsal (all demo actions were decided) | PASS (staged) |
+| 26 feedback in analytics | /analytics browser check: current session merged, exact enum labels | PASS |
+| 27–28 Langfuse trace + observations + prompt versions | v2 observations API round-trips in verify_ai_core/verify_evals; prompts `careloop_*@v1` served from Langfuse | PASS |
+| 29–30 offline suite + experiment logged | full 10-case real run; Langfuse experiment `careloop_eval_cases`; case_06 kept RED (known failure, documented) | PASS (9/10 + 1 known failure) |
+| 31 restart persistence | compose restart → 10 services healthy, 4 patients, all deps ok (openai probe transient ~20 s post-restart — preflight note) | PASS |
+| 32 record | this table | PASS |
+
+Post-finalize launch criteria on the demo encounter: **6/6 GREEN** (schema 100%,
+unsupported 0%, leakage 0, fidelity 100%, p95 NBA 4.8 s < 6 s, ~$0.28 < $0.50).
+
+Ops-card numbers (measured, this encounter): first transcript 3.2 s ·
+state-update median 2.8 s · NBA p95 4.8 s · care-plan generation 21.4 s ·
+~$0.28/encounter (token-derived estimate).
+
 ## Known limitations
 
 - Single-microphone diarization treated as hint only; manual speaker toggle is the primary path.
