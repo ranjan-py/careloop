@@ -124,9 +124,9 @@ export interface EncounterStreamHandlers {
 export function wsBaseUrl(): string {
   const fromEnv = process.env.NEXT_PUBLIC_WS_BASE;
   if (fromEnv) return fromEnv.replace(/\/$/, "");
-  if (typeof window === "undefined") return "ws://localhost:8000";
+  if (typeof window === "undefined") return "ws://localhost:8002";
   const proto = window.location.protocol === "https:" ? "wss:" : "ws:";
-  return `${proto}//${window.location.hostname}:8000`;
+  return `${proto}//${window.location.hostname}:8002`;
 }
 
 export function encounterStreamUrl(encounterId: string): string {

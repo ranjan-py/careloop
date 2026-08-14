@@ -13,6 +13,10 @@ WORKDIR /app
 # Server-side rewrite target for /api/* — inside compose the backend service
 # name resolves; baked at build time by Next's rewrite manifest.
 ARG BACKEND_URL=http://backend:8000
+# Browser-facing WS base — baked at build (NEXT_PUBLIC_*). Host port 8002
+# because 8000 is occupied on the demo machine (see infra/README.md).
+ARG NEXT_PUBLIC_WS_BASE=ws://localhost:8002
+ENV NEXT_PUBLIC_WS_BASE=$NEXT_PUBLIC_WS_BASE
 ENV BACKEND_URL=$BACKEND_URL
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules

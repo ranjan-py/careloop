@@ -20,9 +20,9 @@ docker compose up --build -d   # first time; afterwards: docker compose up -d
 make seed
 ```
 
-- App: http://localhost:3000
-- API: http://localhost:8000
-- Langfuse: http://localhost:3100
+- App: http://localhost:3002
+- API: http://localhost:8002
+- Langfuse: http://localhost:3101
 - Neo4j browser: http://localhost:7474
 
 Demo the encounter with **replay mode** (bundled scripted audio through real Deepgram) or a live

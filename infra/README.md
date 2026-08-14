@@ -14,10 +14,10 @@ Docker-first: everything runnable runs via `docker compose` from the repo root
 
 | Service | Host port |
 |---|---|
-| frontend | 3000 |
-| backend | 8000 |
+| frontend | 3002 |
+| backend | 8002 |
 | Neo4j browser / bolt | 7474 / 7687 |
-| Langfuse web | 3100 |
+| Langfuse web | 3101 |
 | everything else (app-postgres, langfuse-postgres, clickhouse, redis, minio, worker) | none — internal only |
 
 ## Memory

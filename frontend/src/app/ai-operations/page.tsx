@@ -87,7 +87,7 @@ function TraceSummaryTab({ encounterId }: { encounterId: string }) {
           denials (BLOCKED/DENIED) appear here.
         </p>
         <a
-          href="http://localhost:3100"
+          href="http://localhost:3101"
           target="_blank"
           rel="noreferrer"
           className="shrink-0 text-sm text-cta underline-offset-2 hover:underline"

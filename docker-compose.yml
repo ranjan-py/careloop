@@ -30,7 +30,8 @@ services:
       # Seed corpus, scenario bundle, and audio fixture (read-only; spec §30/§33)
       - ./data:/data:ro
     ports:
-      - "8000:8000"
+      # Host 8002: 8000 is occupied by another stack on the demo machine
+      - "8002:8000"
     depends_on:
       app-postgres:
         condition: service_healthy
@@ -45,11 +46,15 @@ services:
       start_period: 30s
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_WS_BASE: ${NEXT_PUBLIC_WS_BASE:-ws://localhost:8002}
     restart: unless-stopped
     env_file: .env
     ports:
-      - "3000:3000"
+      # Host 3002: 3000 is kept free for the user's other stacks (see infra/README.md)
+      - "3002:3000"
     depends_on:
       # service_started (not healthy) on purpose: the UI must come up even if the
       # backend is degraded, so error states stay visible instead of hidden.
@@ -87,8 +92,9 @@ services:
     restart: unless-stopped
     environment:
       NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:-careloop-neo4j-local}
-      # Duplicated as a plain var so the healthcheck below can read it.
-      NEO4J_PASSWORD: ${NEO4J_PASSWORD:-careloop-neo4j-local}
+      # Healthcheck helper — must NOT start with NEO4J_ (the image strict-validates
+      # any NEO4J_* env var as a config setting and crash-loops on unknown ones).
+      HC_NEO4J_PASSWORD: ${NEO4J_PASSWORD:-careloop-neo4j-local}
       NEO4J_server_memory_heap_initial__size: 512M
       NEO4J_server_memory_heap_max__size: 1G
       NEO4J_server_memory_pagecache_size: 512M
@@ -99,7 +105,7 @@ services:
       - neo4j_data:/data
     healthcheck:
       # cypher-shell round-trip proves bolt + auth are actually ready, not just HTTP up.
-      test: ["CMD-SHELL", "cypher-shell -a bolt://localhost:7687 -u neo4j -p \"$${NEO4J_PASSWORD}\" 'RETURN 1' > /dev/null 2>&1 || exit 1"]
+      test: ["CMD-SHELL", "cypher-shell -a bolt://localhost:7687 -u neo4j -p \"$${HC_NEO4J_PASSWORD}\" 'RETURN 1' > /dev/null 2>&1 || exit 1"]
       interval: 10s
       timeout: 15s
       retries: 12
@@ -181,7 +187,9 @@ services:
       SMTP_CONNECTION_URL: ""
     healthcheck:
       # MODIFIED: added (upstream has none); worker serves /api/health on 3030 internally.
-      test: ["CMD-SHELL", "wget -q --spider http://localhost:3030/api/health || exit 1"]
+      # $$HOSTNAME, not localhost: the Next/Node servers bind to the container
+      # hostname interface only, so localhost is refused inside the container.
+      test: ["CMD-SHELL", "wget -q --spider http://$$HOSTNAME:3030/api/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 30
@@ -192,7 +200,7 @@ services:
     restart: always
     depends_on: *langfuse-depends-on
     ports:
-      - "3100:3000" # MODIFIED: host 3100 (frontend owns 3000) — the ONLY exposed Langfuse port (spec §19)
+      - "3101:3000" # MODIFIED: host 3101 (3100 is occupied by another stack's Loki on this machine) — the ONLY exposed Langfuse port (spec §19)
     environment:
       <<: *langfuse-worker-env
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-careloop-nextauth-local} # MODIFIED: wired to .env name
@@ -216,7 +224,8 @@ services:
       # MODIFIED: added (upstream has none). /api/public/ready = readiness (spec §19
       # requires health/readiness to pass). Generous start_period: first boot runs
       # Postgres + ClickHouse migrations, which can take minutes.
-      test: ["CMD-SHELL", "wget -q --spider http://localhost:3000/api/public/ready || exit 1"]
+      # $$HOSTNAME, not localhost — see worker healthcheck note.
+      test: ["CMD-SHELL", "wget -q --spider http://$$HOSTNAME:3000/api/public/ready || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 30

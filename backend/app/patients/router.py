@@ -37,6 +37,7 @@ async def list_patients(
             conditions=p.conditions or [],
             appointment_time=p.appointment_time,
             attention_count=_attention_count(p),
+            display_only=bool(p.display_only),
         )
         for p in rows
     ]

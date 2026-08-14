@@ -1,7 +1,7 @@
 # CareLoop — Demo Script (30-minute onsite; ~15 min content + Q&A)
 
 Preflight (before entering the building): `make reset-demo` · containers warm · Do Not Disturb on ·
-pre-logged into Langfuse (3100) and Neo4j browser (7474) · `.env` excluded from editor ·
+pre-logged into Langfuse (3101) and Neo4j browser (7474) · `.env` excluded from editor ·
 present from this laptop as localhost · mic permission pre-granted in demo browser profile ·
 phone hotspot ready · backup video on laptop AND phone.
 
@@ -41,7 +41,7 @@ Every segment is independently skippable — interruptions must not cascade.
 - Summaries: rejected action provably absent; modified action in its final form.
 - **If only 2 minutes existed, this screen is the demo.**
 
-## 10:00–13:00 — Observability + evals  [screens: /ai-operations, Langfuse 3100]
+## 10:00–13:00 — Observability + evals  [screens: /ai-operations, Langfuse 3101]
 - Trace Summary (from Postgres): the whole encounter tree incl. context-assembly spans,
   per-condition subagent spans, the denial event.
 - One click into local Langfuse: the real trace, prompt versions, token/cost. (Trace generated

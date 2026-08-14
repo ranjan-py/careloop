@@ -29,13 +29,17 @@ field-level definition of every model; `frontend/src/lib/types.ts` mirrors it. v
 
 | Service        | Container      | Host port |
 |----------------|----------------|-----------|
-| frontend       | frontend       | 3000      |
-| backend        | backend        | 8000      |
+| frontend       | frontend       | 3002      |
+| backend        | backend        | 8002      |
 | app Postgres   | app-postgres   | (none)    |
 | Neo4j browser  | neo4j          | 7474      |
 | Neo4j bolt     | neo4j          | 7687      |
-| Langfuse web   | langfuse-web   | 3100      |
+| Langfuse web   | langfuse-web   | 3101      |
 | all other Langfuse services | —  | (none — stripped) |
+
+(Host ports deviate from spec §28's suggestions because 3000, 8000, and 3100 are
+occupied by other stacks on the demo machine. Container-internal ports unchanged.
+Browser-facing WS base: `ws://localhost:8002` via `NEXT_PUBLIC_WS_BASE`.)
 
 ## REST API (spec §27)
 

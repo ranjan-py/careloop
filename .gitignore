@@ -31,3 +31,6 @@ data/synthea/*.jar
 
 # Docker local state
 *.local.yml.bak
+
+# TTS regeneration cache — the frozen fixture WAV is the committed artifact
+data/audio/segments/

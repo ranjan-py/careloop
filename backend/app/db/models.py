@@ -48,6 +48,7 @@ class Patient(Base):
     priorities: Mapped[list] = mapped_column(JSON, default=list)  # "What matters today?"
     care_gaps: Mapped[list] = mapped_column(JSON, default=list)
     appointment_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    display_only: Mapped[bool] = mapped_column(Boolean, default=False)  # spec §7 filler rows
     source_class: Mapped[str] = mapped_column(String(32), default="synthea_ehr")
     fhir_bundle_ref: Mapped[str | None] = mapped_column(String(255), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)

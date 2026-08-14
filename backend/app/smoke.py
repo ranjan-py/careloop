@@ -101,6 +101,13 @@ async def deepgram_smoke() -> dict:
             )
         pcm = wav.readframes(wav.getnframes())
 
+    # Smoke slice: first 90 s at REAL-TIME pace. Deepgram streaming assumes
+    # ≤ real-time input; faster-than-realtime on long audio stalls its buffer
+    # (observed: 2× on the full 238 s fixture never flushed). The full-length
+    # real-time path is exercised by replay mode + E2E, not the smoke.
+    slice_seconds = 90
+    pcm = pcm[: 16000 * 2 * slice_seconds]
+
     import websockets
 
     url = (
@@ -128,7 +135,7 @@ async def deepgram_smoke() -> dict:
         chunk = 3200  # 100 ms of 16 kHz mono Int16
         for i in range(0, len(pcm), chunk):
             await ws.send(pcm[i : i + chunk])
-            await asyncio.sleep(0.05)  # 2× real-time — fine for a smoke test
+            await asyncio.sleep(0.1)  # real-time pace — Deepgram's expectation
         await ws.send(json.dumps({"type": "CloseStream"}))
 
     async def _receiver():
@@ -144,11 +151,21 @@ async def deepgram_smoke() -> dict:
             if text and msg.get("is_final"):
                 finals.append(text)
 
+    receiver_task = asyncio.create_task(_receiver())
     try:
-        await asyncio.wait_for(asyncio.gather(_sender(), _receiver()), timeout=180)
+        await asyncio.wait_for(_sender(), timeout=slice_seconds + 60)
+        # Give Deepgram a grace window to flush trailing finals, then evaluate
+        # whatever actually arrived — the integration evidence is the finals.
+        try:
+            await asyncio.wait_for(receiver_task, timeout=20)
+        except asyncio.TimeoutError:
+            receiver_task.cancel()
     except asyncio.TimeoutError:
-        return _result("deepgram", "FAIL", "Timed out streaming fixture to Deepgram.")
+        receiver_task.cancel()
+        if not finals:
+            return _result("deepgram", "FAIL", "Timed out sending audio to Deepgram.")
     except Exception as exc:  # noqa: BLE001
+        receiver_task.cancel()
         if not finals:
             return _result("deepgram", "FAIL", f"{type(exc).__name__}: {exc}")
     finally:
@@ -191,7 +208,8 @@ async def langfuse_smoke() -> dict:
             public_key=settings.langfuse_public_key,
             secret_key=settings.langfuse_secret_key,
         )
-        with lf.start_as_current_span(name="smoke_trace") as span:
+        # SDK v4: start_as_current_observation replaced v3's start_as_current_span.
+        with lf.start_as_current_observation(name="smoke_trace", as_type="span") as span:
             trace_id = lf.get_current_trace_id()
             parsed = await call_model(
                 task="smoke_langfuse",
@@ -208,7 +226,9 @@ async def langfuse_smoke() -> dict:
     if not trace_id:
         return _result("langfuse", "FAIL", "No trace id from Langfuse SDK.")
 
-    # v3 ingestion is async (web → queue → worker → ClickHouse): poll the API.
+    # Ingestion is async; poll until retrievable. NOTE: Langfuse v4
+    # "events_only" deployments REMOVED /api/public/traces — span/trace data
+    # is read via GET /api/public/v2/observations?traceId=…
     auth = base64.b64encode(
         f"{settings.langfuse_public_key}:{settings.langfuse_secret_key}".encode()
     ).decode()
@@ -217,14 +237,16 @@ async def langfuse_smoke() -> dict:
         while time.monotonic() < deadline:
             try:
                 resp = await client.get(
-                    f"{settings.langfuse_host}/api/public/traces/{trace_id}",
+                    f"{settings.langfuse_host}/api/public/v2/observations",
+                    params={"traceId": trace_id},
                     headers={"Authorization": f"Basic {auth}"},
                 )
-                if resp.status_code == 200:
+                if resp.status_code == 200 and resp.json().get("data"):
                     return _result(
                         "langfuse",
                         "PASS",
-                        f"Trace {trace_id} ingested and retrievable from local Langfuse.",
+                        f"Trace {trace_id} ingested; observations retrievable from "
+                        "local Langfuse via /api/public/v2/observations.",
                         trace_id=trace_id,
                     )
             except httpx.HTTPError:
@@ -233,7 +255,8 @@ async def langfuse_smoke() -> dict:
     return _result(
         "langfuse",
         "FAIL",
-        f"Trace {trace_id} not retrievable within 90 s (async ingestion — check worker/ClickHouse).",
+        f"Trace {trace_id} observations not retrievable within 90 s "
+        "(check worker/ClickHouse ingestion).",
         trace_id=trace_id,
     )
 
