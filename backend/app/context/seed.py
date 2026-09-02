@@ -228,16 +228,24 @@ def build_priorities_and_gaps(
 # ---------------------------------------------------------------------------
 
 
-async def _ensure_display_only_column() -> None:
-    """create_all never ALTERs an existing table; patch older databases so the
-    Patient.display_only column (contract: PatientListItem.display_only) exists."""
+# create_all never ALTERs an existing table, and this demo has no migration
+# tool — every column added to Patient after the first seed needs a line here
+# so an already-populated database picks it up.
+_PATIENT_COLUMN_PATCHES = (
+    "ALTER TABLE patients ADD COLUMN IF NOT EXISTS display_only BOOLEAN NOT NULL DEFAULT FALSE",
+    "ALTER TABLE patients ADD COLUMN IF NOT EXISTS mrn VARCHAR(64)",
+    "ALTER TABLE patients ADD COLUMN IF NOT EXISTS birth_date DATE",
+)
+
+
+async def _ensure_patient_columns() -> None:
+    """Patch older databases so every Patient column the contract exposes exists."""
     engine = get_engine()
     if engine.dialect.name != "postgresql":
         return
     async with engine.begin() as conn:
-        await conn.execute(
-            text("ALTER TABLE patients ADD COLUMN IF NOT EXISTS display_only BOOLEAN NOT NULL DEFAULT FALSE")
-        )
+        for statement in _PATIENT_COLUMN_PATCHES:
+            await conn.execute(text(statement))
 
 
 async def seed() -> int:
@@ -307,7 +315,7 @@ async def seed() -> int:
         print("seed FAILED: app Postgres unreachable — nothing was written.", file=sys.stderr)
         return 1
     try:
-        await _ensure_display_only_column()
+        await _ensure_patient_columns()
         async with get_session_factory()() as session:
             # Identity rows referenced by runtime FKs (encounters, care plans)
             # are UPSERTED in place — same deterministic ids, all fields

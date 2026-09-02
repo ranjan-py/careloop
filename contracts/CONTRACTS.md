@@ -19,6 +19,21 @@ field-level definition of every model; `frontend/src/lib/types.ts` mirrors it. v
 - PatientDetail.priorities are objects `{id,label,detail?,severity?}`; care_gaps `{id,label,detail?}`;
   MedicationSummary uses `ehr_status`; LabSummary has `unit?` + required `observed_at`;
   PatientListItem includes `display_only`.
+
+**v2.1 (Screen 3 chart review — additive only; no field removed or retyped).**
+- `PatientListItem` and `PatientDetail` gain `mrn?` and `birth_date?` (ISO date), carried from
+  the bundle Patient resource (`identifier[system~"mrn"]`, `birthDate`). Display-only filler
+  rows have neither — both are nullable.
+- `PatientDetail` gains `appointment_time?` (already on PatientListItem) and
+  `blood_pressure: [BloodPressureReading]`, oldest → newest.
+- `LabSummary` and `BloodPressureReading` carry fact provenance — `source_type`, `source_class`,
+  `method?`, `encounter_id?` — so the pre-visit chart can distinguish an EHR result from a
+  fact an encounter produced. Rendering the two identically is a contract violation (spec §7:
+  "each fact can expose source/time metadata").
+- `BloodPressureReading {id, systolic, diastolic, value, observed_at, source_type, source_class,
+  method?, encounter_id?}`. `value` is the verbatim stored fact string; only BP facts whose value
+  contains numbers appear — unquantified BP speech ("creeping back up") is omitted, never
+  estimated.
 - Launch-criteria bounds (spec §22.1 "stated bounds"): p95 next-best-action latency **< 6 s**;
   cost per encounter **< $0.50**.
 - Category→tool mapping (spec §15): lab→create_demo_lab_order, follow_up→schedule_demo_followup,

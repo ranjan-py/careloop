@@ -8,7 +8,7 @@ change and a matching frontend update. All data in this demo is synthetic
 from __future__ import annotations
 
 import enum
-from datetime import datetime
+from datetime import date, datetime
 from typing import Annotated, Literal, Union
 
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
@@ -191,6 +191,29 @@ class LabSummary(BaseModel):
     value: str
     unit: str | None = None
     observed_at: datetime
+    # Provenance (spec §7: "each fact can expose source/time metadata"). Chart
+    # labs are ehr/synthea_ehr; anything an encounter produced carries
+    # patient_report + the encounter id, and the UI must not blur the two.
+    source_type: SourceType = "ehr"
+    source_class: SourceClass = "synthea_ehr"
+    method: str | None = None
+    encounter_id: str | None = None
+
+
+class BloodPressureReading(BaseModel):
+    """One plottable BP observation. Facts store BP as display text
+    ("148/92 mmHg"); systolic/diastolic are parsed out for the trend plot and
+    `value` keeps the verbatim stored string."""
+
+    id: str
+    systolic: int
+    diastolic: int
+    value: str
+    observed_at: datetime
+    source_type: SourceType = "ehr"
+    source_class: SourceClass = "synthea_ehr"
+    method: str | None = None
+    encounter_id: str | None = None
 
 
 class PatientListItem(BaseModel):
@@ -200,6 +223,8 @@ class PatientListItem(BaseModel):
     name: str
     age: int
     sex: str
+    mrn: str | None = None
+    birth_date: date | None = None
     conditions: list[str] = Field(default_factory=list)
     appointment_time: datetime | None = None
     attention_count: int = 0  # "3–4 items need attention"
@@ -228,9 +253,13 @@ class PatientDetail(BaseModel):
     name: str
     age: int
     sex: str
+    mrn: str | None = None
+    birth_date: date | None = None
+    appointment_time: datetime | None = None
     conditions: list[str] = Field(default_factory=list)
     medications: list[MedicationSummary] = Field(default_factory=list)
     labs: list[LabSummary] = Field(default_factory=list)
+    blood_pressure: list[BloodPressureReading] = Field(default_factory=list)
     priorities: list[PriorityItem] = Field(default_factory=list)  # "What matters today?"
     care_gaps: list[CareGap] = Field(default_factory=list)
 

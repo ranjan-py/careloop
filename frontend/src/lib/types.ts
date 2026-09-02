@@ -195,6 +195,10 @@ export interface PatientListItem {
   name: string;
   age: number;
   sex?: string;
+  /** Chart-header identifiers, carried from the bundle Patient resource. */
+  mrn?: string | null;
+  /** ISO date (YYYY-MM-DD). */
+  birth_date?: string | null;
   conditions: string[];
   /** ISO timestamp of today's appointment. */
   appointment_time?: string;
@@ -234,6 +238,28 @@ export interface LabSummary {
   unit?: string;
   /** ISO timestamp — age rendered at display time. */
   observed_at: string;
+  /** Provenance (spec §7). Chart labs are ehr/synthea_ehr; a lab fact an
+   * encounter produced carries patient_report + its encounter id, and the
+   * chart must render the difference rather than blur it. */
+  source_type: FactSourceType;
+  source_class: SourceClass;
+  method?: string | null;
+  encounter_id?: string | null;
+}
+
+/** One plottable BP observation — pinned by backend/app/schemas/core.py.
+ * `value` is the verbatim stored string ("around 150/95 mmHg"); systolic and
+ * diastolic are what the plot uses. */
+export interface BloodPressureReading {
+  id: string;
+  systolic: number;
+  diastolic: number;
+  value: string;
+  observed_at: string;
+  source_type: FactSourceType;
+  source_class: SourceClass;
+  method?: string | null;
+  encounter_id?: string | null;
 }
 
 /** /patients/{id} incl. priorities[] and care_gaps[] — structured shapes the
@@ -243,6 +269,8 @@ export interface PatientDetail extends PatientListItem {
   care_gaps: CareGap[];
   medications: MedicationSummary[];
   labs: LabSummary[];
+  /** Oldest → newest. Only BP facts that actually carry numbers appear here. */
+  blood_pressure: BloodPressureReading[];
 }
 
 /** /patients/{id}/timeline — pinned by backend/app/schemas/core.py. */

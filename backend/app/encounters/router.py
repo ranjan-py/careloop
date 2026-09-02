@@ -179,7 +179,14 @@ async def get_encounter(
         )
     ).scalars().all()
     suggestions = (
-        await session.execute(select(m.Suggestion).where(m.Suggestion.encounter_id == encounter_id))
+        # Chronological: the live workspace stacks these newest-first and needs
+        # a stable order, otherwise a page reload can reshuffle which card is
+        # the current one.
+        await session.execute(
+            select(m.Suggestion)
+            .where(m.Suggestion.encounter_id == encounter_id)
+            .order_by(m.Suggestion.created_at, m.Suggestion.id)
+        )
     ).scalars().all()
     segments = (
         await session.execute(

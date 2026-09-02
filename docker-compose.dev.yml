@@ -2,14 +2,15 @@
 # Usage: make dev   (== docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d)
 # The plain docker-compose.yml production-style build is for demo/verification runs.
 #
-# Assumes both service images use WORKDIR /app (backend package at /app/app,
-# frontend Next.js app at /app) — see infra/README.md if paths change.
+# Mount targets are each image's WORKDIR — backend /srv/careloop, frontend /app
+# (see backend/Dockerfile and frontend/Dockerfile). They differ; a mount at the
+# wrong path leaves the baked copy in place and hot reload silently does nothing.
 
 services:
   backend:
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
-      - ./backend:/app
+      - ./backend:/srv/careloop
     environment:
       APP_ENV: development
 

@@ -198,6 +198,15 @@ def test_patient_row_medications_only_current():
     assert row["age"] == 58
 
 
+def test_patient_row_carries_chart_header_identifiers():
+    """MRN and DOB are parsed from the bundle Patient — the chart header reads
+    them, so they must survive into the row and not stop at the intermediate."""
+    row = fhir_ingest.build_patient_row(parse(), now=NOW)
+    assert row["mrn"] == "CL-DEMO-0001"
+    assert row["birth_date"] == date(1968, 3, 30)
+    assert row["sex"] == "male"
+
+
 # ---------------------------------------------------------------------------
 # Missed follow-up mapping (noshow appointment)
 # ---------------------------------------------------------------------------

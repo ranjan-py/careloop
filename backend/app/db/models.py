@@ -8,9 +8,9 @@ rows (owned by app.context). String primary keys carry human-readable ids
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
-from sqlalchemy import JSON, Boolean, DateTime, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import JSON, Boolean, Date, DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -43,6 +43,11 @@ class Patient(Base):
     name: Mapped[str] = mapped_column(String(255))
     age: Mapped[int] = mapped_column(Integer)
     sex: Mapped[str] = mapped_column(String(16))
+    # Chart-header identifiers, carried verbatim from the bundle Patient resource
+    # (identifier[system contains "mrn"] / birthDate). Age stays stored because
+    # it is computed against seed-time "today"; DOB is what a clinician reads.
+    mrn: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    birth_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     conditions: Mapped[list] = mapped_column(JSON, default=list)
     medications: Mapped[list] = mapped_column(JSON, default=list)  # [{name, dose, ehr_status}]
     priorities: Mapped[list] = mapped_column(JSON, default=list)  # "What matters today?"

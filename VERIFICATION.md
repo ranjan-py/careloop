@@ -17,6 +17,7 @@ execution, real-integration smoke where applicable, and E2E validation. Valid st
 | Docker stack (compose up, health checks) | PASS | `docker compose up -d --wait`; all 10 services healthy | 2026-08-14: healthy after 3 real fixes (Neo4j env strict-validation, Langfuse healthcheck $HOSTNAME binding, host-port collisions) | first-run `--wait` exit masked by pipe — fixed process |
 | Seeded patient (Synthea pipeline / overlay fallback) | PASS | `python -m app.context.seed` in container against live Postgres+Neo4j | 4 patients, 24 timeline events, 11 chart facts, 30 evidence snippets, 1730 feedback rows; REAL Synthea base bundle | feedback source aggregates internally inconsistent — documented choice in seed agent notes |
 | Patient overview (pre-visit intelligence) | PASS | authenticated API reads: /patients, /patients/john-miller, timeline | priorities with severities, meds ehr_status, labs runtime-relative (K+ = today−92d exactly) | UI walkthrough pending E2E |
+| Patient overview — chart review (header, BP trend, lab meters, journey) | PASS | 2026-08-18: API reads + 6 new unit tests + rendered browser review at demo-fresh state | see "Screen 3 chart review" section below | reference intervals are assay normals, labelled as such |
 | Deepgram streaming (live mic) | IN PROGRESS | relay implemented + unit-tested; browser mic path pending Chrome walkthrough | code path identical to verified replay leg | E2E step 5 encore |
 | Deepgram streaming (replay fixture) | PASS | `scripts/verify_replay.py` — real E2E through app WS against live stack | enc_c9890888bd82: 20 finals + 56 interims, diarization correct, finalize handshake clean, 21 segments persisted, ws_errors=0 | — |
 | OpenAI fact extraction (per-condition subagents) | PASS | `scripts/verify_full_loop.py` — real replay through app WS + pipeline | enc_b63a87ee77ec: 11 fact envelopes live, 7 encounter facts persisted, per-condition spans in Langfuse | conflict rule tightened after false metformin conflict (stopped-vs-active only) |
@@ -170,7 +171,81 @@ Ops-card numbers (measured, this encounter): first transcript 3.2 s ·
 state-update median 2.8 s · NBA p95 4.8 s · care-plan generation 21.4 s ·
 ~$0.28/encounter (token-derived estimate).
 
+## Screen 3 chart review (2026-08-18, user-requested: clinical fields + trend + journey)
+
+Scope: Patient Overview gained a chart header (identity + demographics + latest-value
+tiles), a blood-pressure trend, reference-range lab meters, and a care-journey timeline.
+NO new clinical values were authored — every number on the screen still comes from the
+existing overlay bundle through the real ingest path.
+
+| Change | Test performed | Evidence/result |
+|---|---|---|
+| MRN + DOB plumbed bundle → Postgres → API | `make seed` then authenticated `GET /api/patients/john-miller` | `mrn: CL-DEMO-0001`, `birth_date: 1968-03-30`; both were parsed by `fhir_ingest` before this change and dropped at `build_patient_row` |
+| New Patient columns on an existing database | re-ran `make seed` against the already-populated volume | `_ensure_patient_columns()` ALTERs applied; no data loss, encounters/care-plan FKs intact |
+| BP series projection | `GET /api/patients/john-miller` on seeded state | 2 readings (148/92 @ 74d, 151/94 @ 49d), oldest→newest, `source_class: synthea_ehr` |
+| Unquantified BP speech is never plotted | `tests/test_patients_chart.py` (6 tests) | "creeping back up" → not plottable; "around 150/95 mmHg" → plots 150/95 with the hedge preserved verbatim in `value` |
+| **Lab provenance leak (found during this work)** | queried `facts` directly, then re-read the API | An encounter-written `patient_report` fact (`kidney labs and potassium = fresh_labs_ordered`) rendered in the pre-visit Labs card indistinguishable from an EHR result. `LabSummary` now carries `source_type`/`source_class`/`method`/`encounter_id`; the UI splits chart labs from encounter-reported facts and chips each one |
+| Deterministic lab ordering | `GET /api/patients/john-miller` ×3 | `[Potassium, A1C, Creatinine, eGFR]` every time — creatinine/eGFR share a timestamp and previously shuffled between runs |
+| Chart palette | `dataviz/scripts/validate_palette.js`, light mode, surface #FFFFFF | lightness band, chroma floor, CVD separation (worst adjacent ΔE 23.8 deutan), normal-vision floor, contrast — all PASS. Mark #2557D6 = 6.15:1 on white |
+| Rendered output | headless Chrome (CDP), authenticated, 1440px, full page + hover state | Reviewed at demo-fresh state (`make reset-runtime`): header band, priorities hero, BP plot with the 49-day silence annotated, 4 reference meters, care journey with the 245-day gap marker. Hover readout resolves date + value + source |
+| No regression in the rest of the app | `pytest tests/` (in-container, source mounted) | 232 passed, 1 pre-existing failure (see below). `POST /api/encounters` still returns a stream ticket; `/patients` list unchanged |
+
+Backend/frontend contract: additive only, recorded as **v2.1** in `contracts/CONTRACTS.md`
+(no field removed or retyped). `PatientDetail` is consumed by exactly one screen.
+
+Deliberately NOT changed:
+- Neo4j projection still carries clinical context only — MRN/DOB stay in Postgres.
+- Reference intervals shown on the meters are assay normals, labelled as such in the UI,
+  and are not individualized treatment targets.
+
+## Live workspace — card overflow + Next-best stacking (2026-08-18, user-reported mid-rehearsal)
+
+Two defects reported from a live replay: (1) long extracted values broke the layout,
+(2) suggestion cards appeared to be "overridden".
+
+**(1) Horizontal overflow — fixed.** Extraction emits enum-ish machine tokens
+(`fresh_labs_needed_before_next_medication_decision`, 48 chars, no spaces). A token with
+no break opportunity sets a min-content width that grid and flex children will not shrink
+below, so the column widened and the whole page scrolled sideways. Needed three fixes
+together — `min-w-0` on the Card (grid child), `min-w-0` on the flex child, and
+`overflow-wrap: anywhere` on the text; any one alone is insufficient. Values are also
+humanised for display (`not_restarted` → "Not restarted") with the raw string kept in the
+`title` attribute — presentation only, the stored fact is untouched.
+
+**(2) "Overriding" was spec-mandated policy, not a bug.** `SuggestionEngine.max_active = 2`
+([suggestions.py:250](backend/app/ai/suggestions.py)) supersedes the OLDEST active
+suggestion and emits `suggestion.remove`; the client deleted the card. Spec line 534 pins
+"max 1–2 active suggestions", so the cap was kept. What changed is that the policy is now
+visible: newest active card carries the accent (+ a "now" chip so state is never
+colour-only), older ACTIVE cards demote to neutral but stay readable and dismissible, and
+superseded cards move into an "Earlier this visit" stack instead of vanishing. Clinician
+*dismissal* still removes the card — that is the clinician's decision, not the system's.
+
+| Check | How | Result |
+|---|---|---|
+| Real live path (not hydration) | drove Chrome via CDP through the real flow: patient page → Start Visit → Start replay, against live Deepgram + OpenAI (enc_bb88d9c45521) | sampled at t+45/80/115 s |
+| Page never scrolls sideways | `documentElement.scrollWidth > clientWidth` at every sample, plus a sweep for any element painting wider than its container | `false` at every sample; `overflowingElements: []` |
+| Exactly one accent card | counted `bg-cta-soft` cards live | `1` at every sample, and it is the first child of the list (newest-first confirmed) |
+| Supersede retains, not deletes | `suggestion.remove` frames arrived during the run | `superseded: 6` retained under "Earlier this visit"; `earlier: true` |
+| Dismiss affordance correct | DOM assertion | active card has Dismiss; superseded cards do not |
+| eGFR casing | DOM assertion | `eGFR` present, `EGFR` absent — **a regression I introduced and caught here**: naive sentence-casing turned `eGFR` into `EGFR`, a different marker entirely. Capitalisation now only applies when the leading word carries no casing of its own |
+| Deterministic reload order | added `order_by(created_at, id)` to the encounter suggestion query | a reload can no longer reshuffle which card is current |
+| No regression | `pytest tests/` | 232 passed, 1 pre-existing failure (see Known limitations) |
+
+Left alone deliberately: `not_owned` still appears inside one suggestion's *rationale*
+sentence. That is the model's own prose, not a field being formatted — rewriting it would
+misrepresent model output.
+
 ## Known limitations
 
 - Single-microphone diarization treated as hint only; manual speaker toggle is the primary path.
 - Fixture audio is TTS-generated; the streaming path through Deepgram is real.
+- `tests/test_evals_summary.py::test_generate_encounter_summary_mocked` is
+  environment-dependent: it asserts `prompt_version == "...@fallback"`, but
+  `PromptRegistry(client=None)` means "resolve the global client", not "no client", so
+  with Langfuse reachable the registry serves the managed prompt and reports `@v2`.
+  Passes with Langfuse down, fails with it up. Product behaviour is correct; the test
+  needs to force the fallback path. **Pre-existing — not introduced by the Screen 3 work.**
+- The overlay bundle's appointment times are stored as UTC but were authored as clinic
+  wall-clock, so a 09:30 appointment renders as 05:30 in US Eastern. Affects the patients
+  list and the chart header equally. Pre-existing; fix belongs in the overlay generator.

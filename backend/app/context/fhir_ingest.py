@@ -425,6 +425,8 @@ def build_patient_row(chart: ChartIngest, *, now: datetime) -> dict:
         "name": chart.patient.name,
         "age": chart.patient.age_on(now.date()),
         "sex": chart.patient.sex,
+        "mrn": chart.patient.mrn,
+        "birth_date": chart.patient.birth_date,
         "conditions": [c.name for c in chart.scripted_conditions],
         "medications": [
             {"name": med.name, "dose": med.dose, "ehr_status": med.ehr_status}
